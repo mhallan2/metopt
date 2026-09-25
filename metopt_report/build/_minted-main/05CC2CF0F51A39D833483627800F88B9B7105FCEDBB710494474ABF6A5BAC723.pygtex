@@ -1,0 +1,26 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+    \PYG{k}{def} \PYG{n+nf}{bracketing}\PYG{p}{(}\PYG{n}{function}\PYG{p}{,} \PYG{n}{interval}\PYG{p}{,} \PYG{n}{N}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{):}
+        \PYG{c+c1}{\PYGZsh{}...}
+        \PYG{k}{while} \PYG{k+kc}{True}\PYG{p}{:}
+            \PYG{c+c1}{\PYGZsh{}...}
+            \PYG{n}{middle}\PYG{p}{,} \PYG{n}{f\PYGZus{}middle} \PYG{o}{=} \PYG{p}{(}\PYG{n}{left} \PYG{o}{+} \PYG{n}{right}\PYG{p}{)} \PYG{o}{/} \PYG{l+m+mf}{2.0}\PYG{p}{,} \PYG{n}{function}\PYG{p}{(}\PYG{n}{middle}\PYG{p}{)}
+            \PYG{n}{n\PYGZus{}evaluations} \PYG{o}{+=} \PYG{l+m+mi}{1}
+
+            \PYG{k}{if} \PYG{n}{f\PYGZus{}middle} \PYG{o}{\PYGZlt{}} \PYG{n}{f\PYGZus{}left} \PYG{o+ow}{and} \PYG{n}{f\PYGZus{}middle} \PYG{o}{\PYGZlt{}} \PYG{n}{f\PYGZus{}right}\PYG{p}{:}
+                \PYG{c+c1}{\PYGZsh{} Возвращаем искомую тройку точек и значения функции в них,}
+                \PYG{c+c1}{\PYGZsh{} чтобы не пересчитывать повторно.}
+                \PYG{k}{return} \PYG{p}{(}
+                    \PYG{p}{(}\PYG{n}{left}\PYG{p}{,} \PYG{n}{middle}\PYG{p}{,} \PYG{n}{right}\PYG{p}{),}
+                    \PYG{p}{(}\PYG{n}{f\PYGZus{}left}\PYG{p}{,} \PYG{n}{f\PYGZus{}middle}\PYG{p}{,} \PYG{n}{f\PYGZus{}right}\PYG{p}{),}
+                    \PYG{n}{n\PYGZus{}evaluations}\PYG{p}{,}
+                    \PYG{n}{evaluation\PYGZus{}points}\PYG{p}{,}
+                    \PYG{k+kc}{None}\PYG{p}{,}
+                \PYG{p}{)}
+            \PYG{c+c1}{\PYGZsh{}...}
+            \PYG{k}{if} \PYG{n}{f\PYGZus{}left} \PYG{o}{\PYGZlt{}} \PYG{n}{f\PYGZus{}middle}\PYG{p}{:}
+                \PYG{n}{right} \PYG{o}{=} \PYG{n}{middle}
+                \PYG{n}{f\PYGZus{}right} \PYG{o}{=} \PYG{n}{f\PYGZus{}middle}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{n}{left} \PYG{o}{=} \PYG{n}{middle}
+                \PYG{n}{f\PYGZus{}left} \PYG{o}{=} \PYG{n}{f\PYGZus{}middle}
+\end{Verbatim}

@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+    \PYG{k}{def} \PYG{n+nf}{dichotomy}\PYG{p}{(}\PYG{n}{function}\PYG{p}{):}
+        \PYG{c+c1}{\PYGZsh{}...}
+        \PYG{k}{while} \PYG{n}{right} \PYG{o}{\PYGZhy{}} \PYG{n}{left} \PYG{o}{\PYGZgt{}} \PYG{n}{eps}\PYG{p}{:}
+            \PYG{n}{middle} \PYG{o}{=} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{p}{(}\PYG{n}{left} \PYG{o}{+} \PYG{n}{right}\PYG{p}{)}
+
+            \PYG{n}{x1}\PYG{p}{,} \PYG{n}{x2} \PYG{o}{=} \PYG{n}{middle} \PYG{o}{\PYGZhy{}} \PYG{n}{delta}\PYG{p}{,} \PYG{n}{middle} \PYG{o}{+} \PYG{n}{delta}
+            \PYG{n}{f1\PYGZus{}value}\PYG{p}{,} \PYG{n}{f2\PYGZus{}value} \PYG{o}{=} \PYG{n}{function}\PYG{p}{(}\PYG{n}{x1}\PYG{p}{),} \PYG{n}{function}\PYG{p}{(}\PYG{n}{x2}\PYG{p}{)}
+
+            \PYG{k}{if} \PYG{n}{f1\PYGZus{}value} \PYG{o}{\PYGZlt{}} \PYG{n}{f2\PYGZus{}value}\PYG{p}{:}
+                \PYG{n}{right} \PYG{o}{=} \PYG{n}{x2}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{n}{left} \PYG{o}{=} \PYG{n}{x1}
+
+        \PYG{n}{x\PYGZus{}min} \PYG{o}{=} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{p}{(}\PYG{n}{left} \PYG{o}{+} \PYG{n}{right}\PYG{p}{)}
+        \PYG{c+c1}{\PYGZsh{}...}
+\end{Verbatim}

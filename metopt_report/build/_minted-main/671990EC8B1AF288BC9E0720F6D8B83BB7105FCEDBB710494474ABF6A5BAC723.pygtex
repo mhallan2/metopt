@@ -1,0 +1,42 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{broken\PYGZus{}lines}\PYG{p}{(}\PYG{n}{function}\PYG{p}{,} \PYG{n}{N}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{show}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{):}
+    \PYG{c+c1}{\PYGZsh{}...}
+    \PYG{n}{current\PYGZus{}M} \PYG{o}{=} \PYG{n+nb}{max}\PYG{p}{(}\PYG{n}{update\PYGZus{}lipschitz}\PYG{p}{(}\PYG{n}{x\PYGZus{}points}\PYG{p}{,} \PYG{n}{y\PYGZus{}values}\PYG{p}{),} \PYG{l+m+mf}{1e\PYGZhy{}6}\PYG{p}{)}
+    \PYG{k}{while} \PYG{k+kc}{True}\PYG{p}{:}
+        \PYG{n}{R\PYGZus{}values} \PYG{o}{=} \PYG{p}{[]}
+        \PYG{n}{t\PYGZus{}values} \PYG{o}{=} \PYG{p}{[]}
+
+        \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x\PYGZus{}points}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{):}
+            \PYG{c+c1}{\PYGZsh{}... вычисление координат точки пересечения ломаных}
+            \PYG{n}{t} \PYG{o}{=} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{p}{(}\PYG{n}{x\PYGZus{}left} \PYG{o}{+} \PYG{n}{x\PYGZus{}right}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{p}{(}\PYG{n}{y\PYGZus{}right} \PYG{o}{\PYGZhy{}} \PYG{n}{y\PYGZus{}left}\PYG{p}{)} \PYG{o}{/} \PYG{p}{(}\PYG{l+m+mf}{2.0} \PYG{o}{*} \PYG{n}{current\PYGZus{}M}\PYG{p}{)}
+            \PYG{n}{R} \PYG{o}{=} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{p}{(}\PYG{n}{y\PYGZus{}left} \PYG{o}{+} \PYG{n}{y\PYGZus{}right}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{n}{current\PYGZus{}M} \PYG{o}{*} \PYG{p}{(}\PYG{n}{x\PYGZus{}right} \PYG{o}{\PYGZhy{}} \PYG{n}{x\PYGZus{}left}\PYG{p}{)} \PYG{o}{/} \PYG{l+m+mf}{2.0}
+
+            \PYG{n}{R\PYGZus{}values}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{R}\PYG{p}{)}
+            \PYG{n}{t\PYGZus{}values}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{t}\PYG{p}{)}
+        \PYG{c+c1}{\PYGZsh{} Наименьшее значение R соответствует наиболее перспективной точке}
+        \PYG{c+c1}{\PYGZsh{} для вычисления функции}
+        \PYG{n}{best\PYGZus{}index} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{argmin}\PYG{p}{(}\PYG{n}{R\PYGZus{}values}\PYG{p}{)}
+        \PYG{n}{lower\PYGZus{}bound} \PYG{o}{=} \PYG{n}{R\PYGZus{}values}\PYG{p}{[}\PYG{n}{best\PYGZus{}index}\PYG{p}{]}
+
+        \PYG{c+c1}{\PYGZsh{} Нестрогий критерий остановки}
+        \PYG{k}{if} \PYG{n}{np}\PYG{o}{.}\PYG{n}{min}\PYG{p}{(}\PYG{n}{y\PYGZus{}values}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{n}{lower\PYGZus{}bound} \PYG{o}{\PYGZlt{}} \PYG{n}{eps\PYGZus{}f}\PYG{p}{:}
+            \PYG{k}{break}
+        \PYG{k}{if} \PYG{n}{n\PYGZus{}evaluations} \PYG{o}{\PYGZgt{}=} \PYG{n}{max\PYGZus{}evaluations}\PYG{p}{:}
+            \PYG{k}{break}
+
+        \PYG{n}{x\PYGZus{}new} \PYG{o}{=} \PYG{n}{t\PYGZus{}values}\PYG{p}{[}\PYG{n}{best\PYGZus{}index}\PYG{p}{]}
+        \PYG{n}{y\PYGZus{}new} \PYG{o}{=} \PYG{n}{function}\PYG{p}{(}\PYG{n}{x\PYGZus{}new}\PYG{p}{)}
+
+        \PYG{k}{if} \PYG{n}{y\PYGZus{}new} \PYG{o}{\PYGZlt{}=} \PYG{n+nb}{min}\PYG{p}{(}\PYG{n}{y\PYGZus{}values}\PYG{p}{):}
+            \PYG{n}{x\PYGZus{}best\PYGZus{}history}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{x\PYGZus{}new}\PYG{p}{)}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{n}{x\PYGZus{}best\PYGZus{}history}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{x\PYGZus{}best\PYGZus{}history}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{])}
+
+        \PYG{n}{insert\PYGZus{}index} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{searchsorted}\PYG{p}{(}\PYG{n}{x\PYGZus{}points}\PYG{p}{,} \PYG{n}{x\PYGZus{}new}\PYG{p}{)}
+        \PYG{n}{x\PYGZus{}points} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{insert}\PYG{p}{(}\PYG{n}{x\PYGZus{}points}\PYG{p}{,} \PYG{n}{insert\PYGZus{}index}\PYG{p}{,} \PYG{n}{x\PYGZus{}new}\PYG{p}{)}
+        \PYG{n}{y\PYGZus{}values} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{insert}\PYG{p}{(}\PYG{n}{y\PYGZus{}values}\PYG{p}{,} \PYG{n}{insert\PYGZus{}index}\PYG{p}{,} \PYG{n}{y\PYGZus{}new}\PYG{p}{)}
+        \PYG{n}{current\PYGZus{}M} \PYG{o}{=} \PYG{n}{update\PYGZus{}lipschitz}\PYG{p}{(}\PYG{n}{x\PYGZus{}points}\PYG{p}{,} \PYG{n}{y\PYGZus{}values}\PYG{p}{,} \PYG{n}{current\PYGZus{}M}\PYG{p}{)}
+
+    \PYG{n}{index\PYGZus{}min} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{argmin}\PYG{p}{(}\PYG{n}{y\PYGZus{}values}\PYG{p}{)}
+    \PYG{n}{x\PYGZus{}min} \PYG{o}{=} \PYG{n}{x\PYGZus{}points}\PYG{p}{[}\PYG{n}{index\PYGZus{}min}\PYG{p}{]}
+\end{Verbatim}

@@ -1,0 +1,40 @@
+def broken_lines(function, N=None, show=True):
+    #...
+    current_M = max(update_lipschitz(x_points, y_values), 1e-6)
+    while True:
+        R_values = []
+        t_values = []
+
+        for j in range(len(x_points) - 1):
+            #... вычисление координат точки пересечения ломаных
+            t = 0.5 * (x_left + x_right) - (y_right - y_left) / (2.0 * current_M)
+            R = 0.5 * (y_left + y_right) - current_M * (x_right - x_left) / 2.0
+
+            R_values.append(R)
+            t_values.append(t)
+        # Наименьшее значение R соответствует наиболее перспективной точке
+        # для вычисления функции
+        best_index = np.argmin(R_values)
+        lower_bound = R_values[best_index]
+
+        # Нестрогий критерий остановки
+        if np.min(y_values) - lower_bound < eps_f:
+            break
+        if n_evaluations >= max_evaluations:
+            break
+
+        x_new = t_values[best_index]
+        y_new = function(x_new)
+
+        if y_new <= min(y_values):
+            x_best_history.append(x_new)
+        else:
+            x_best_history.append(x_best_history[-1])
+
+        insert_index = np.searchsorted(x_points, x_new)
+        x_points = np.insert(x_points, insert_index, x_new)
+        y_values = np.insert(y_values, insert_index, y_new)
+        current_M = update_lipschitz(x_points, y_values, current_M)
+
+    index_min = np.argmin(y_values)
+    x_min = x_points[index_min]

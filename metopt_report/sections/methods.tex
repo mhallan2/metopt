@@ -1,0 +1,396 @@
+\section{Описание реализации}
+
+Программа реализована на языке Python с использованием библиотек
+\texttt{NumPy} и \texttt{Matplotlib}. Реализация разделена на две группы:
+локальные методы для унимодальных функций и глобальные методы для функций
+с несколькими локальными экстремумами.
+
+\subsection{Общая структура программы}
+
+Для унификации результатов работы алгоритмов используется класс
+\texttt{OptimizationResult}. Он хранит не только найденную точку минимума,
+но и данные, необходимые для последующего анализа:
+
+\begin{itemize}
+    \item найденный минимум;
+    \item значение функции в найденной точке;
+    \item количество вычислений функции;
+    \item точки, в которых вычислялась функция;
+    \item границы локализующего интервала;
+    \item историю сходимости;
+    \item историю наилучшего найденного значения для глобальных методов;
+    \item текущую оценку константы Липшица.
+\end{itemize}
+
+Основные поля результата объединены в структуре данных:
+
+\begin{mintedbox}{python}
+@dataclass
+class OptimizationResult:
+    x_min: float
+    f_min: float
+    n_evaluations: int
+    neighbors: np.ndarray
+    evaluation_points: np.ndarray
+    n_history: list[int] = field(default_factory=list)
+    length_history: list[float] = field(default_factory=list)
+    f_best_history: list[float] = field(default_factory=list)
+    x_best_history: list[float] = field(default_factory=list)
+    lipschitz_M: float | None = None
+
+    @property
+    def interval_length(self):
+        return self.neighbors[1] - self.neighbors[0]
+\end{mintedbox}
+
+Для каждого метода задаются точность по координате минимума
+\texttt{eps}, ограничение на число вычислений функции и, при необходимости,
+точность по значению функции \texttt{eps\_f}.
+
+\subsection{Локальные методы}
+
+Локальные методы применяются к унимодальным функциям. Их общая идея состоит
+в последовательном уменьшении отрезка локализации. В программе реализованы
+пассивный поиск, методы дихотомии, Фибоначчи, золотого сечения
+и парабол.
+
+\subsubsection{Пассивный поиск}
+
+При пассивном поиске исходный интервал разбивается на равномерную сетку.
+Значение функции вычисляется в каждой внутренней точке, после чего выбирается
+точка с наименьшим значением функции. Соседние точки сетки образуют итоговый
+отрезок локализации.
+
+Число точек выбирается из требования к погрешности координаты:
+
+\begin{equation}
+N \geq \frac{b-a}{2\varepsilon}.
+\end{equation}
+
+\subsubsection{Метод дихотомии}
+
+На каждой итерации метода дихотомии вычисляются значения функции в двух точках,
+расположенных симметрично относительно середины текущего интервала:
+
+\begin{equation}
+x_1 = \frac{a+b}{2} - \delta, \qquad
+x_2 = \frac{a+b}{2} + \delta.
+\end{equation}
+
+Если $f(x_1) < f(x_2)$, правая граница заменяется точкой $x_2$; иначе левая
+граница заменяется точкой $x_1$. Процесс продолжается до достижения заданной
+длины интервала.
+
+\begin{mintedbox}{python}
+    def dichotomy(function):
+        #...
+        while right - left > eps:
+            middle = 0.5 * (left + right)
+
+            x1, x2 = middle - delta, middle + delta
+            f1_value, f2_value = function(x1), function(x2)
+
+            if f1_value < f2_value:
+                right = x2
+            else:
+                left = x1
+        
+        x_min = 0.5 * (left + right)
+        #...
+\end{mintedbox}
+
+\subsubsection{Методы Фибоначчи и золотого сечения}
+
+Метод Фибоначчи выбирает внутренние точки в соответствии с отношением соседних
+чисел Фибоначчи. Перед началом итераций определяется такое число $n$, чтобы
+после заданного количества сужений длина интервала стала меньше требуемой
+точности. На каждой следующей итерации одна из уже вычисленных точек сохраняется,
+поэтому требуется только одно новое вычисление функции.
+
+\begin{mintedbox}{python}
+    def fibonacci(function):
+        fib_need = (b - a) / (eps - delta)
+        n = fibonacci_numbers_until(fib_need)
+        # Выбираем в качестве [left, right] нормализованный интервал [0, 1]
+        x1 = left + (right - left) * fib(n - 2) / fib(n)
+        x2 = left + (right - left) * fib(n - 1) / fib(n)
+        #...
+        while n > 3:
+            if f1_value < f2_value:
+                right = x2
+                x2, f2_value = x1, f1_value
+                n -= 1
+                if n == 3: # F(1)/F(3) = F(2)/F(3) = 0.5
+                    break
+                x1 = left + (right - left) * fib(n - 2) / fib(n)
+                f1_value = normalized_function(x1)
+                n_evaluations += 1
+            else:
+                left = x1
+                x1, f1_value = x2, f2_value
+                n -= 1
+                if n == 3:
+                    break
+                x2 = left + (right - left) * fib(n - 1) / fib(n)
+                f2_value = normalized_function(x2)
+                n_evaluations += 1
+        x2 = x1 + normalized_delta
+        f2_value = normalized_function(x2)
+        if f1_value < f2_value:
+            right = x2
+        else:
+            left = x1
+        # Вычисление в исходных координатах
+        x_min = a + (b - a) * (left + right) / 2.0
+        #...
+\end{mintedbox}
+
+\newpage
+
+Метод золотого сечения использует постоянное отношение
+
+\[
+\varphi = \frac{1+\sqrt{5}}{2}.
+\]
+
+В отличие от метода Фибоначчи, коэффициент сужения не меняется от итерации к
+итерации. Это позволяет применять один и тот же шаг до достижения требуемой
+точности. Этот метод можно считать частным случаем метода Фибоначчи при $n \to \infty$.
+
+\begin{mintedbox}{python}
+    def golden_section(function):
+        #...
+        while True:
+            if f1_value < f2_value:
+                right = x2
+                x2, f2_value = x1, f1_value
+
+                if right - left <= normalized_eps:
+                    break
+                # Критерий остановки по числу вычислений
+                elif n_evaluations >= N:
+                    break
+
+                x1 = left + (right - left) / phi**2
+                f1_value = normalized_function(x1)
+                n_evaluations += 1
+
+            else:
+                left = x1
+                x1, f1_value = x2, f2_value
+
+                if right - left <= normalized_eps:
+                    break
+                elif n_evaluations >= N:
+                    break
+
+                x2 = left + (right - left) / phi
+                f2_value = normalized_function(x2)
+                n_evaluations += 1
+
+        x_min = a + (b - a) * (left + right) / 2.0
+        #...
+\end{mintedbox}
+
+\newpage
+
+\subsubsection{Метод парабол}
+
+Метод парабол строит квадратичную аппроксимацию функции по трем точкам
+\((x_0, f_0)\), \((x_1, f_1)\) и \((x_2, f_2)\), где
+\(f_i = f(x_i)\). Центральная точка должна соответствовать меньшему
+значению функции:
+\[
+x_0 < x_1 < x_2, \qquad f_1 < f_0, \qquad f_1 < f_2.
+\]
+
+После чего в качестве новой точки
+рассматривает вершину построенной параболы. Для начального выбора тройки точек
+используется процедура схожая по принципу с методом дихотомии.
+
+\begin{mintedbox}{python}
+    def bracketing(function, interval, N=None):
+        #...
+        while True:
+            #...
+            middle, f_middle = (left + right) / 2.0, function(middle)
+            n_evaluations += 1
+
+            if f_middle < f_left and f_middle < f_right:
+                # Возвращаем искомую тройку точек и значения функции в них,
+                # чтобы не пересчитывать повторно.
+                return (
+                    (left, middle, right),
+                    (f_left, f_middle, f_right),
+                    n_evaluations,
+                    evaluation_points,
+                    None,
+                )
+            #...
+            if f_left < f_middle:
+                right = middle
+                f_right = f_middle
+            else:
+                left = middle
+                f_left = f_middle
+\end{mintedbox}
+
+Если параболическая аппроксимация вырождается или вершина находится вне текущего
+интервала, выполняется запасной шаг деления интервала. Это делает алгоритм
+устойчивее для функций, на которых построение параболы временно ненадёжно.
+
+\newpage
+
+\begin{mintedbox}{python}
+def parabola(function, N=None, show=True):
+    #...
+    bracket, values, n_evaluations, evaluation_points, boundary_interval = bracketing(function,(a, b), N=N)
+    (x0, x1, x2) = bracket
+    (y0, y1, y2) = values
+
+    while x2 - x0 > eps:
+        extremum = parabola_vertex((x0, x1, x2), (y0, y1, y2))
+        use_parabola = extremum is not None
+
+        if use_parabola and (not x0 < extremum < x2 or np.isclose(extremum, x1)):
+            use_parabola = False
+
+        if not use_parabola: # Запасной шаг деления интервала
+            if x1 - x0 > x2 - x1:
+                extremum = 0.5 * (x0 + x1)
+            else:
+                extremum = 0.5 * (x1 + x2)
+
+        y_extremum = function(extremum)
+        n_evaluations += 1
+
+        if extremum < x1:
+            if y_extremum < y1:
+                x2, y2 = x1, y1
+                x1, y1 = extremum, y_extremum
+            else:
+                x0, y0 = extremum, y_extremum
+        else:
+            if y_extremum < y1:
+                x0, y0 = x1, y1
+                x1, y1 = extremum, y_extremum
+            else:
+                x2, y2 = extremum, y_extremum
+
+        n_history.append(n_evaluations)
+        length_history.append(x2 - x0)
+    x_min = 0.5 * (x0 + x2)
+    #...
+\end{mintedbox}
+
+\subsection{Глобальные методы}
+
+Для мультимодальных функций в программе реализованы равномерный перебор
+и метод ломаных. В отличие от локальных методов, они не предполагают, что
+на всём исходном интервале существует только один минимум.
+
+\subsubsection{Равномерный перебор}
+
+Метод перебора строит равномерную сетку из $N$ точек и вычисляет функцию в каждой
+из них. Найденная точка является приближением глобального минимума, а половина
+длины шага сетки задаёт оценку погрешности по координате:
+
+\[
+|x_{\min} - x^*| \leq \frac{b-a}{2N}.
+\]
+
+Для анализа процесса поиска в программе сохраняются последовательности лучших
+найденных значений $x_k$ и $f_k$ после каждого вычисления функции.
+
+\subsubsection{Метод ломаных}
+
+Реализация этого метода в работе основана на адаптивном подборе константы Липшица:
+на каждой итерации ее значение обновляется по максимальному коэффициенту наклона 
+между соседними вычисленными точками.
+
+\begin{equation}
+M_{\mathrm{new}} = C_{\mathrm{safety}} \cdot \max_i
+\left|
+\frac{f(x_{i+1})-f(x_i)}{x_{i+1}-x_i}
+\right|.
+\end{equation}
+
+Множитель $C_{\mathrm{safety}}$ \footnote{Значение множителя 
+$C_{\mathrm{safety}} = 1.09$ подобрано
+экспериментально.} используется как запас относительно
+наблюдаемого максимального наклона.
+Без этого запаса нижние ломаные могли бы проходить через уже вычисленные
+точки, что снижало бы эффективность локализации минимума.
+
+\begin{mintedbox}{python}
+    def update_lipschitz(x_points, y_points, current_M=-np.inf, safety=1.09,):
+        order = np.argsort(x_points)
+        x_sorted = np.array(x_points)[order]
+        y_sorted = np.array(y_points)[order]
+        
+        slopes = np.abs(np.diff(y_sorted) / np.diff(x_sorted))
+        new_estimate = safety * np.max(slopes)
+
+        return max(current_M, new_estimate)
+\end{mintedbox}
+
+\newpage
+
+\begin{mintedbox}{python}
+def broken_lines(function, N=None, show=True):
+    #...
+    current_M = max(update_lipschitz(x_points, y_values), 1e-6)
+    while True:
+        R_values = []
+        t_values = []
+
+        for j in range(len(x_points) - 1):
+            #... вычисление координат точки пересечения ломаных
+            t = 0.5 * (x_left + x_right) - (y_right - y_left) / (2.0 * current_M)
+            R = 0.5 * (y_left + y_right) - current_M * (x_right - x_left) / 2.0
+
+            R_values.append(R)
+            t_values.append(t)
+        # Наименьшее значение R соответствует наиболее перспективной точке
+        # для вычисления функции
+        best_index = np.argmin(R_values)
+        lower_bound = R_values[best_index]
+
+        # Нестрогий критерий остановки
+        if np.min(y_values) - lower_bound < eps_f:
+            break
+        if n_evaluations >= max_evaluations:
+            break
+
+        x_new = t_values[best_index]
+        y_new = function(x_new)
+
+        if y_new <= min(y_values):
+            x_best_history.append(x_new)
+        else:
+            x_best_history.append(x_best_history[-1])
+
+        insert_index = np.searchsorted(x_points, x_new)
+        x_points = np.insert(x_points, insert_index, x_new)
+        y_values = np.insert(y_values, insert_index, y_new)
+        current_M = update_lipschitz(x_points, y_values, current_M)
+
+    index_min = np.argmin(y_values)
+    x_min = x_points[index_min]
+\end{mintedbox}
+
+\subsection{Визуализация и сравнение результатов}
+
+Функция \texttt{visualize} строит два графика. На первом показывается функция
+на всём исходном интервале, точки вычислений и найденный минимум. На втором
+отображается увеличенная окрестность итогового отрезка локализации. Графики
+сохраняются в каталоге \\ \texttt{results/<method>/} с именем тестовой функции.
+
+Для исследования сходимости сохраняются число вычислений функции и длина
+текущего интервала локализации. Эти данные используются для построения графика
+в логарифмическом масштабе. Отдельно реализовано сравнение методов при одинаковом
+числе вычислений функции, что позволяет сравнивать не только итоговую точность,
+но и вычислительную эффективность алгоритмов.
+Для визуализации используется два графика:
+на первом отображается функция на всём интервале,
+на втором --- увеличенная область около найденного минимума.

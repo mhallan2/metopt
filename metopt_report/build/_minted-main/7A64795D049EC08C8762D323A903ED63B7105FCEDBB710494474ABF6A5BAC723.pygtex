@@ -1,0 +1,41 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{parabola}\PYG{p}{(}\PYG{n}{function}\PYG{p}{,} \PYG{n}{N}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{show}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{):}
+    \PYG{c+c1}{\PYGZsh{}...}
+    \PYG{n}{bracket}\PYG{p}{,} \PYG{n}{values}\PYG{p}{,} \PYG{n}{n\PYGZus{}evaluations}\PYG{p}{,} \PYG{n}{evaluation\PYGZus{}points}\PYG{p}{,} \PYG{n}{boundary\PYGZus{}interval} \PYG{o}{=} \PYG{n}{bracketing}\PYG{p}{(}\PYG{n}{function}\PYG{p}{,(}\PYG{n}{a}\PYG{p}{,} \PYG{n}{b}\PYG{p}{),} \PYG{n}{N}\PYG{o}{=}\PYG{n}{N}\PYG{p}{)}
+    \PYG{p}{(}\PYG{n}{x0}\PYG{p}{,} \PYG{n}{x1}\PYG{p}{,} \PYG{n}{x2}\PYG{p}{)} \PYG{o}{=} \PYG{n}{bracket}
+    \PYG{p}{(}\PYG{n}{y0}\PYG{p}{,} \PYG{n}{y1}\PYG{p}{,} \PYG{n}{y2}\PYG{p}{)} \PYG{o}{=} \PYG{n}{values}
+
+    \PYG{k}{while} \PYG{n}{x2} \PYG{o}{\PYGZhy{}} \PYG{n}{x0} \PYG{o}{\PYGZgt{}} \PYG{n}{eps}\PYG{p}{:}
+        \PYG{n}{extremum} \PYG{o}{=} \PYG{n}{parabola\PYGZus{}vertex}\PYG{p}{((}\PYG{n}{x0}\PYG{p}{,} \PYG{n}{x1}\PYG{p}{,} \PYG{n}{x2}\PYG{p}{),} \PYG{p}{(}\PYG{n}{y0}\PYG{p}{,} \PYG{n}{y1}\PYG{p}{,} \PYG{n}{y2}\PYG{p}{))}
+        \PYG{n}{use\PYGZus{}parabola} \PYG{o}{=} \PYG{n}{extremum} \PYG{o+ow}{is} \PYG{o+ow}{not} \PYG{k+kc}{None}
+
+        \PYG{k}{if} \PYG{n}{use\PYGZus{}parabola} \PYG{o+ow}{and} \PYG{p}{(}\PYG{o+ow}{not} \PYG{n}{x0} \PYG{o}{\PYGZlt{}} \PYG{n}{extremum} \PYG{o}{\PYGZlt{}} \PYG{n}{x2} \PYG{o+ow}{or} \PYG{n}{np}\PYG{o}{.}\PYG{n}{isclose}\PYG{p}{(}\PYG{n}{extremum}\PYG{p}{,} \PYG{n}{x1}\PYG{p}{)):}
+            \PYG{n}{use\PYGZus{}parabola} \PYG{o}{=} \PYG{k+kc}{False}
+
+        \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{use\PYGZus{}parabola}\PYG{p}{:} \PYG{c+c1}{\PYGZsh{} Запасной шаг деления интервала}
+            \PYG{k}{if} \PYG{n}{x1} \PYG{o}{\PYGZhy{}} \PYG{n}{x0} \PYG{o}{\PYGZgt{}} \PYG{n}{x2} \PYG{o}{\PYGZhy{}} \PYG{n}{x1}\PYG{p}{:}
+                \PYG{n}{extremum} \PYG{o}{=} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{p}{(}\PYG{n}{x0} \PYG{o}{+} \PYG{n}{x1}\PYG{p}{)}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{n}{extremum} \PYG{o}{=} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{p}{(}\PYG{n}{x1} \PYG{o}{+} \PYG{n}{x2}\PYG{p}{)}
+
+        \PYG{n}{y\PYGZus{}extremum} \PYG{o}{=} \PYG{n}{function}\PYG{p}{(}\PYG{n}{extremum}\PYG{p}{)}
+        \PYG{n}{n\PYGZus{}evaluations} \PYG{o}{+=} \PYG{l+m+mi}{1}
+
+        \PYG{k}{if} \PYG{n}{extremum} \PYG{o}{\PYGZlt{}} \PYG{n}{x1}\PYG{p}{:}
+            \PYG{k}{if} \PYG{n}{y\PYGZus{}extremum} \PYG{o}{\PYGZlt{}} \PYG{n}{y1}\PYG{p}{:}
+                \PYG{n}{x2}\PYG{p}{,} \PYG{n}{y2} \PYG{o}{=} \PYG{n}{x1}\PYG{p}{,} \PYG{n}{y1}
+                \PYG{n}{x1}\PYG{p}{,} \PYG{n}{y1} \PYG{o}{=} \PYG{n}{extremum}\PYG{p}{,} \PYG{n}{y\PYGZus{}extremum}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{n}{x0}\PYG{p}{,} \PYG{n}{y0} \PYG{o}{=} \PYG{n}{extremum}\PYG{p}{,} \PYG{n}{y\PYGZus{}extremum}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{k}{if} \PYG{n}{y\PYGZus{}extremum} \PYG{o}{\PYGZlt{}} \PYG{n}{y1}\PYG{p}{:}
+                \PYG{n}{x0}\PYG{p}{,} \PYG{n}{y0} \PYG{o}{=} \PYG{n}{x1}\PYG{p}{,} \PYG{n}{y1}
+                \PYG{n}{x1}\PYG{p}{,} \PYG{n}{y1} \PYG{o}{=} \PYG{n}{extremum}\PYG{p}{,} \PYG{n}{y\PYGZus{}extremum}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{n}{x2}\PYG{p}{,} \PYG{n}{y2} \PYG{o}{=} \PYG{n}{extremum}\PYG{p}{,} \PYG{n}{y\PYGZus{}extremum}
+
+        \PYG{n}{n\PYGZus{}history}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{n\PYGZus{}evaluations}\PYG{p}{)}
+        \PYG{n}{length\PYGZus{}history}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{x2} \PYG{o}{\PYGZhy{}} \PYG{n}{x0}\PYG{p}{)}
+    \PYG{n}{x\PYGZus{}min} \PYG{o}{=} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{p}{(}\PYG{n}{x0} \PYG{o}{+} \PYG{n}{x2}\PYG{p}{)}
+    \PYG{c+c1}{\PYGZsh{}...}
+\end{Verbatim}

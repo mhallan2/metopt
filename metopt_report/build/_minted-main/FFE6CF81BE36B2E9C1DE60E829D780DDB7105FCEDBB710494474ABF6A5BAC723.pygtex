@@ -1,0 +1,37 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+    \PYG{k}{def} \PYG{n+nf}{fibonacci}\PYG{p}{(}\PYG{n}{function}\PYG{p}{):}
+        \PYG{n}{fib\PYGZus{}need} \PYG{o}{=} \PYG{p}{(}\PYG{n}{b} \PYG{o}{\PYGZhy{}} \PYG{n}{a}\PYG{p}{)} \PYG{o}{/} \PYG{p}{(}\PYG{n}{eps} \PYG{o}{\PYGZhy{}} \PYG{n}{delta}\PYG{p}{)}
+        \PYG{n}{n} \PYG{o}{=} \PYG{n}{fibonacci\PYGZus{}numbers\PYGZus{}until}\PYG{p}{(}\PYG{n}{fib\PYGZus{}need}\PYG{p}{)}
+        \PYG{c+c1}{\PYGZsh{} Выбираем в качестве [left, right] нормализованный интервал [0, 1]}
+        \PYG{n}{x1} \PYG{o}{=} \PYG{n}{left} \PYG{o}{+} \PYG{p}{(}\PYG{n}{right} \PYG{o}{\PYGZhy{}} \PYG{n}{left}\PYG{p}{)} \PYG{o}{*} \PYG{n}{fib}\PYG{p}{(}\PYG{n}{n} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{2}\PYG{p}{)} \PYG{o}{/} \PYG{n}{fib}\PYG{p}{(}\PYG{n}{n}\PYG{p}{)}
+        \PYG{n}{x2} \PYG{o}{=} \PYG{n}{left} \PYG{o}{+} \PYG{p}{(}\PYG{n}{right} \PYG{o}{\PYGZhy{}} \PYG{n}{left}\PYG{p}{)} \PYG{o}{*} \PYG{n}{fib}\PYG{p}{(}\PYG{n}{n} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{)} \PYG{o}{/} \PYG{n}{fib}\PYG{p}{(}\PYG{n}{n}\PYG{p}{)}
+        \PYG{c+c1}{\PYGZsh{}...}
+        \PYG{k}{while} \PYG{n}{n} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{3}\PYG{p}{:}
+            \PYG{k}{if} \PYG{n}{f1\PYGZus{}value} \PYG{o}{\PYGZlt{}} \PYG{n}{f2\PYGZus{}value}\PYG{p}{:}
+                \PYG{n}{right} \PYG{o}{=} \PYG{n}{x2}
+                \PYG{n}{x2}\PYG{p}{,} \PYG{n}{f2\PYGZus{}value} \PYG{o}{=} \PYG{n}{x1}\PYG{p}{,} \PYG{n}{f1\PYGZus{}value}
+                \PYG{n}{n} \PYG{o}{\PYGZhy{}=} \PYG{l+m+mi}{1}
+                \PYG{k}{if} \PYG{n}{n} \PYG{o}{==} \PYG{l+m+mi}{3}\PYG{p}{:} \PYG{c+c1}{\PYGZsh{} F(1)/F(3) = F(2)/F(3) = 0.5}
+                    \PYG{k}{break}
+                \PYG{n}{x1} \PYG{o}{=} \PYG{n}{left} \PYG{o}{+} \PYG{p}{(}\PYG{n}{right} \PYG{o}{\PYGZhy{}} \PYG{n}{left}\PYG{p}{)} \PYG{o}{*} \PYG{n}{fib}\PYG{p}{(}\PYG{n}{n} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{2}\PYG{p}{)} \PYG{o}{/} \PYG{n}{fib}\PYG{p}{(}\PYG{n}{n}\PYG{p}{)}
+                \PYG{n}{f1\PYGZus{}value} \PYG{o}{=} \PYG{n}{normalized\PYGZus{}function}\PYG{p}{(}\PYG{n}{x1}\PYG{p}{)}
+                \PYG{n}{n\PYGZus{}evaluations} \PYG{o}{+=} \PYG{l+m+mi}{1}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{n}{left} \PYG{o}{=} \PYG{n}{x1}
+                \PYG{n}{x1}\PYG{p}{,} \PYG{n}{f1\PYGZus{}value} \PYG{o}{=} \PYG{n}{x2}\PYG{p}{,} \PYG{n}{f2\PYGZus{}value}
+                \PYG{n}{n} \PYG{o}{\PYGZhy{}=} \PYG{l+m+mi}{1}
+                \PYG{k}{if} \PYG{n}{n} \PYG{o}{==} \PYG{l+m+mi}{3}\PYG{p}{:}
+                    \PYG{k}{break}
+                \PYG{n}{x2} \PYG{o}{=} \PYG{n}{left} \PYG{o}{+} \PYG{p}{(}\PYG{n}{right} \PYG{o}{\PYGZhy{}} \PYG{n}{left}\PYG{p}{)} \PYG{o}{*} \PYG{n}{fib}\PYG{p}{(}\PYG{n}{n} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{)} \PYG{o}{/} \PYG{n}{fib}\PYG{p}{(}\PYG{n}{n}\PYG{p}{)}
+                \PYG{n}{f2\PYGZus{}value} \PYG{o}{=} \PYG{n}{normalized\PYGZus{}function}\PYG{p}{(}\PYG{n}{x2}\PYG{p}{)}
+                \PYG{n}{n\PYGZus{}evaluations} \PYG{o}{+=} \PYG{l+m+mi}{1}
+        \PYG{n}{x2} \PYG{o}{=} \PYG{n}{x1} \PYG{o}{+} \PYG{n}{normalized\PYGZus{}delta}
+        \PYG{n}{f2\PYGZus{}value} \PYG{o}{=} \PYG{n}{normalized\PYGZus{}function}\PYG{p}{(}\PYG{n}{x2}\PYG{p}{)}
+        \PYG{k}{if} \PYG{n}{f1\PYGZus{}value} \PYG{o}{\PYGZlt{}} \PYG{n}{f2\PYGZus{}value}\PYG{p}{:}
+            \PYG{n}{right} \PYG{o}{=} \PYG{n}{x2}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{n}{left} \PYG{o}{=} \PYG{n}{x1}
+        \PYG{c+c1}{\PYGZsh{} Вычисление в исходных координатах}
+        \PYG{n}{x\PYGZus{}min} \PYG{o}{=} \PYG{n}{a} \PYG{o}{+} \PYG{p}{(}\PYG{n}{b} \PYG{o}{\PYGZhy{}} \PYG{n}{a}\PYG{p}{)} \PYG{o}{*} \PYG{p}{(}\PYG{n}{left} \PYG{o}{+} \PYG{n}{right}\PYG{p}{)} \PYG{o}{/} \PYG{l+m+mf}{2.0}
+        \PYG{c+c1}{\PYGZsh{}...}
+\end{Verbatim}

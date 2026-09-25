@@ -1,0 +1,21 @@
+\babel@toc {russian}{}\relax 
+\babel@toc {russian}{}\relax 
+\contentsline {section}{\numberline {1}Цель работы}{2}{section.0.1}%
+\contentsline {section}{\numberline {2}Теоретические сведения}{2}{section.0.2}%
+\contentsline {section}{\numberline {3}Описание реализации}{4}{section.0.3}%
+\contentsline {subsection}{\numberline {3.1}Общая структура программы}{4}{subsection.0.3.1}%
+\contentsline {subsection}{\numberline {3.2}Локальные методы}{5}{subsection.0.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Пассивный поиск}{5}{subsubsection.0.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Метод дихотомии}{5}{subsubsection.0.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Методы Фибоначчи и золотого сечения}{6}{subsubsection.0.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Метод парабол}{8}{subsubsection.0.3.2.4}%
+\contentsline {subsection}{\numberline {3.3}Глобальные методы}{10}{subsection.0.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Равномерный перебор}{10}{subsubsection.0.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Метод ломаных}{10}{subsubsection.0.3.3.2}%
+\contentsline {subsection}{\numberline {3.4}Визуализация и сравнение результатов}{12}{subsection.0.3.4}%
+\contentsline {section}{\numberline {4}Результаты вычислений}{12}{section.0.4}%
+\contentsline {subsection}{\numberline {4.1}Работа локальных методов}{12}{subsection.0.4.1}%
+\contentsline {subsection}{\numberline {4.2}Скорость сходимости локальных методов}{16}{subsection.0.4.2}%
+\contentsline {subsection}{\numberline {4.3}Глобальные методы}{18}{subsection.0.4.3}%
+\contentsline {subsection}{\numberline {4.4}Сравнение при одинаковом числе вычислений}{18}{subsection.0.4.4}%
+\contentsline {section}{\numberline {5}Вывод}{20}{section.0.5}%
