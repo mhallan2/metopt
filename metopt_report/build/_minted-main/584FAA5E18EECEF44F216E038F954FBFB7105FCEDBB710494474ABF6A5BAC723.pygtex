@@ -13,8 +13,7 @@
                     \PYG{p}{(}\PYG{n}{left}\PYG{p}{,} \PYG{n}{middle}\PYG{p}{,} \PYG{n}{right}\PYG{p}{),}
                     \PYG{p}{(}\PYG{n}{f\PYGZus{}left}\PYG{p}{,} \PYG{n}{f\PYGZus{}middle}\PYG{p}{,} \PYG{n}{f\PYGZus{}right}\PYG{p}{),}
                     \PYG{n}{n\PYGZus{}evaluations}\PYG{p}{,}
-                    \PYG{n}{evaluation\PYGZus{}points}\PYG{p}{,}
-                    \PYG{k+kc}{None}\PYG{p}{,}
+                    \PYG{c+c1}{\PYGZsh{}...}
                 \PYG{p}{)}
             \PYG{c+c1}{\PYGZsh{}...}
             \PYG{k}{if} \PYG{n}{f\PYGZus{}left} \PYG{o}{\PYGZlt{}} \PYG{n}{f\PYGZus{}middle}\PYG{p}{:}

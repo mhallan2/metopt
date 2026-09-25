@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.17.0 (TeX Live 2023/Debian)  (format=lualatex 2026.9.22)  25 SEP 2026 10:23
+This is LuaHBTeX, Version 1.17.0 (TeX Live 2023/Debian)  (format=lualatex 2026.9.22)  25 SEP 2026 21:26
  system commands enabled.
 **main.tex
 (./main.tex
@@ -1153,11 +1153,11 @@ Package hyperref Info: Link coloring OFF on input line 5.
 
 \openout6 = main.out
  (./title.tex
-LaTeX Font Info:    Trying to load font information for U+msa on input line 47.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 51.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 47.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 51.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
@@ -1210,7 +1210,7 @@ Overfull \hbox (8.74988pt too wide) in paragraph at lines 199--203
 
 
 \openout8 = main.listing
-(./build/_minted-main/05CC2CF0F51A39D833483627800F88B9B7105FCEDBB710494474ABF6A5BAC723.pygtex) [8]
+(./build/_minted-main/584FAA5E18EECEF44F216E038F954FBFB7105FCEDBB710494474ABF6A5BAC723.pygtex) [8]
 \openout8 = main.listing
  (./build/_minted-main/7A64795D049EC08C8762D323A903ED63B7105FCEDBB710494474ABF6A5BAC723.pygtex
 LaTeX Font Info:    Font shape `TU/NotoSansMono(0)/m/n' will be
@@ -1219,111 +1219,116 @@ LaTeX Font Info:    Font shape `TU/NotoSansMono(0)/m/n' will be
 \openout8 = main.listing
  (./build/_minted-main/9A5DAFF9281BBC6E661B5BD9D52185D4B7105FCEDBB710494474ABF6A5BAC723.pygtex) [10]
 \openout8 = main.listing
- (./build/_minted-main/671990EC8B1AF288BC9E0720F6D8B83BB7105FCEDBB710494474ABF6A5BAC723.pygtex) [11]) (./sections/results.tex
-<results/passive/f1.png, id=184, 859.7721pt x 354.123pt>
+ (./build/_minted-main/671990EC8B1AF288BC9E0720F6D8B83BB7105FCEDBB710494474ABF6A5BAC723.pygtex) [11] [12]) (./sections/results.tex
+<results/passive/f1.png, id=188, 859.7721pt x 354.123pt>
 File: results/passive/f1.png Graphic file (type png)
 <use results/passive/f1.png>
-Package luatex.def Info: results/passive/f1.png  used on input line 22.
+Package luatex.def Info: results/passive/f1.png  used on input line 30.
 (luatex.def)             Requested size: 445.99553pt x 183.69652pt.
- [12]
 <results/dichotomy/f1.png, id=189, 859.7721pt x 354.123pt>
 File: results/dichotomy/f1.png Graphic file (type png)
 <use results/dichotomy/f1.png>
-Package luatex.def Info: results/dichotomy/f1.png  used on input line 29.
+Package luatex.def Info: results/dichotomy/f1.png  used on input line 37.
 (luatex.def)             Requested size: 445.99553pt x 183.69652pt.
-<results/fibonacci/f1.png, id=190, 858.0858pt x 354.123pt>
+ [13<./results/passive/f1.png>]
+<results/fibonacci/f1.png, id=196, 858.0858pt x 354.123pt>
 File: results/fibonacci/f1.png Graphic file (type png)
 <use results/fibonacci/f1.png>
-Package luatex.def Info: results/fibonacci/f1.png  used on input line 36.
+Package luatex.def Info: results/fibonacci/f1.png  used on input line 44.
 (luatex.def)             Requested size: 445.99553pt x 184.05855pt.
-<results/golden_ratio/f1.png, id=191, 859.7721pt x 354.123pt>
+<results/golden_ratio/f1.png, id=197, 859.7721pt x 354.123pt>
 File: results/golden_ratio/f1.png Graphic file (type png)
 <use results/golden_ratio/f1.png>
-Package luatex.def Info: results/golden_ratio/f1.png  used on input line 43.
+Package luatex.def Info: results/golden_ratio/f1.png  used on input line 51.
 (luatex.def)             Requested size: 445.99553pt x 183.69652pt.
- [13<./results/passive/f1.png><./results/dichotomy/f1.png><./results/fibonacci/f1.png>]
-<results/parabola/f1.png, id=202, 856.3995pt x 354.123pt>
+<results/parabola/f1.png, id=198, 856.3995pt x 354.123pt>
 File: results/parabola/f1.png Graphic file (type png)
 <use results/parabola/f1.png>
-Package luatex.def Info: results/parabola/f1.png  used on input line 50.
+Package luatex.def Info: results/parabola/f1.png  used on input line 58.
 (luatex.def)             Requested size: 445.99553pt x 184.42058pt.
-<results/passive/f2.png, id=203, 859.7721pt x 354.123pt>
+ [14<./results/dichotomy/f1.png><./results/fibonacci/f1.png><./results/golden_ratio/f1.png>]
+<results/passive/f2.png, id=209, 859.7721pt x 354.123pt>
 File: results/passive/f2.png Graphic file (type png)
 <use results/passive/f2.png>
-Package luatex.def Info: results/passive/f2.png  used on input line 62.
+Package luatex.def Info: results/passive/f2.png  used on input line 70.
 (luatex.def)             Requested size: 445.99553pt x 183.69652pt.
- [14<./results/golden_ratio/f1.png><./results/parabola/f1.png>]
-<results/dichotomy/f2.png, id=212, 857.3631pt x 354.123pt>
+<results/dichotomy/f2.png, id=210, 857.3631pt x 354.123pt>
 File: results/dichotomy/f2.png Graphic file (type png)
 <use results/dichotomy/f2.png>
-Package luatex.def Info: results/dichotomy/f2.png  used on input line 69.
+Package luatex.def Info: results/dichotomy/f2.png  used on input line 77.
 (luatex.def)             Requested size: 445.99553pt x 184.21526pt.
-<results/fibonacci/f2.png, id=213, 859.2903pt x 354.123pt>
+ [15<./results/parabola/f1.png><./results/passive/f2.png>]
+<results/fibonacci/f2.png, id=219, 859.2903pt x 354.123pt>
 File: results/fibonacci/f2.png Graphic file (type png)
 <use results/fibonacci/f2.png>
-Package luatex.def Info: results/fibonacci/f2.png  used on input line 76.
+Package luatex.def Info: results/fibonacci/f2.png  used on input line 84.
 (luatex.def)             Requested size: 445.99553pt x 183.79918pt.
-<results/golden_ratio/f2.png, id=214, 859.7721pt x 354.123pt>
+<results/golden_ratio/f2.png, id=220, 859.7721pt x 354.123pt>
 File: results/golden_ratio/f2.png Graphic file (type png)
 <use results/golden_ratio/f2.png>
-Package luatex.def Info: results/golden_ratio/f2.png  used on input line 83.
+Package luatex.def Info: results/golden_ratio/f2.png  used on input line 91.
 (luatex.def)             Requested size: 445.99553pt x 183.69652pt.
- [15<./results/passive/f2.png><./results/dichotomy/f2.png><./results/fibonacci/f2.png>]
-<results/parabola/f2.png, id=225, 856.3995pt x 354.123pt>
+<results/parabola/f2.png, id=221, 856.3995pt x 354.123pt>
 File: results/parabola/f2.png Graphic file (type png)
 <use results/parabola/f2.png>
-Package luatex.def Info: results/parabola/f2.png  used on input line 90.
+Package luatex.def Info: results/parabola/f2.png  used on input line 98.
 (luatex.def)             Requested size: 445.99553pt x 184.42058pt.
-<results/convergence/comparison_f1.png, id=228, 570.6921pt x 354.123pt>
+ [16<./results/dichotomy/f2.png><./results/fibonacci/f2.png><./results/golden_ratio/f2.png>]
+<results/convergence/comparison_f1.png, id=234, 570.6921pt x 354.123pt>
 File: results/convergence/comparison_f1.png Graphic file (type png)
 <use results/convergence/comparison_f1.png>
-Package luatex.def Info: results/convergence/comparison_f1.png  used on input line 110.
+Package luatex.def Info: results/convergence/comparison_f1.png  used on input line 118.
 (luatex.def)             Requested size: 445.99553pt x 276.74435pt.
- [16<./results/golden_ratio/f2.png><./results/parabola/f2.png>]
-<results/convergence/comparison_f2.png, id=240, 570.2103pt x 354.123pt>
+ [17<./results/parabola/f2.png>]
+<results/convergence/comparison_f2.png, id=244, 570.2103pt x 354.123pt>
 File: results/convergence/comparison_f2.png Graphic file (type png)
 <use results/convergence/comparison_f2.png>
-Package luatex.def Info: results/convergence/comparison_f2.png  used on input line 117.
+Package luatex.def Info: results/convergence/comparison_f2.png  used on input line 125.
 (luatex.def)             Requested size: 445.99553pt x 276.9875pt.
-<results/search/f3.png, id=243, 859.7721pt x 354.123pt>
+<results/search/f3.png, id=247, 859.7721pt x 354.123pt>
 File: results/search/f3.png Graphic file (type png)
 <use results/search/f3.png>
-Package luatex.def Info: results/search/f3.png  used on input line 136.
+Package luatex.def Info: results/search/f3.png  used on input line 144.
 (luatex.def)             Requested size: 445.99553pt x 183.69652pt.
- [17<./results/convergence/comparison_f1.png><./results/convergence/comparison_f2.png>]
-<results/broken_lines/f3.png, id=250, 859.7721pt x 354.123pt>
+ [18<./results/convergence/comparison_f1.png><./results/convergence/comparison_f2.png>]
+<results/broken_lines/f3.png, id=254, 859.7721pt x 354.123pt>
 File: results/broken_lines/f3.png Graphic file (type png)
 <use results/broken_lines/f3.png>
-Package luatex.def Info: results/broken_lines/f3.png  used on input line 143.
+Package luatex.def Info: results/broken_lines/f3.png  used on input line 151.
 (luatex.def)             Requested size: 445.99553pt x 183.69652pt.
-<results/comparison/global_x_error_f3.png, id=253, 570.2103pt x 353.8821pt>
-File: results/comparison/global_x_error_f3.png Graphic file (type png)
-<use results/comparison/global_x_error_f3.png>
-Package luatex.def Info: results/comparison/global_x_error_f3.png  used on input line 163.
+<results/comparison/global_x_convergence_f3.png, id=257, 570.2103pt x 354.123pt>
+File: results/comparison/global_x_convergence_f3.png Graphic file (type png)
+<use results/comparison/global_x_convergence_f3.png>
+Package luatex.def Info: results/comparison/global_x_convergence_f3.png  used on input line 171.
+(luatex.def)             Requested size: 413.13632pt x 256.57858pt.
+ [19<./results/search/f3.png><./results/broken_lines/f3.png>]
+<results/comparison/global_f_convergence_f3.png, id=269, 570.2103pt x 353.8821pt>
+File: results/comparison/global_f_convergence_f3.png Graphic file (type png)
+<use results/comparison/global_f_convergence_f3.png>
+Package luatex.def Info: results/comparison/global_f_convergence_f3.png  used on input line 178.
 (luatex.def)             Requested size: 413.13632pt x 256.40404pt.
- [18<./results/search/f3.png><./results/broken_lines/f3.png>]
-<results/comparison/global_f_error_f3.png, id=265, 570.2103pt x 353.8821pt>
-File: results/comparison/global_f_error_f3.png Graphic file (type png)
-<use results/comparison/global_f_error_f3.png>
-Package luatex.def Info: results/comparison/global_f_error_f3.png  used on input line 170.
-(luatex.def)             Requested size: 413.13632pt x 256.40404pt.
- [19<./results/comparison/global_x_error_f3.png><./results/comparison/global_f_error_f3.png>]
-<results/comparison/local_f3.png, id=273, 642.9621pt x 352.9185pt>
-File: results/comparison/local_f3.png Graphic file (type png)
-<use results/comparison/local_f3.png>
-Package luatex.def Info: results/comparison/local_f3.png  used on input line 188.
+ [20<./results/comparison/global_x_convergence_f3.png><./results/comparison/global_f_convergence_f3.png>]
+<results/comparison/local_f1.png, id=279, 642.9621pt x 352.9185pt>
+File: results/comparison/local_f1.png Graphic file (type png)
+<use results/comparison/local_f1.png>
+Package luatex.def Info: results/comparison/local_f1.png  used on input line 196.
 (luatex.def)             Requested size: 413.13632pt x 226.77176pt.
-) (./sections/conclusion.tex
+<results/comparison/local_f2.png, id=280, 642.9621pt x 352.9185pt>
+File: results/comparison/local_f2.png Graphic file (type png)
+<use results/comparison/local_f2.png>
+Package luatex.def Info: results/comparison/local_f2.png  used on input line 203.
+(luatex.def)             Requested size: 413.13632pt x 226.77176pt.
+ [21<./results/comparison/local_f1.png><./results/comparison/local_f2.png>]) (./sections/conclusion.tex
 Overfull \hbox (0.22884pt too wide) in paragraph at lines 26--29
 \TU/TimesNewRoman(0)/b/n/12 ным ме-то-дом. \TU/TimesNewRoman(0)/m/n/12 Для по-вы-ше-ния точ-но-сти ему при-хо-дит-ся рав-но-мер-но ис-сле-до-вать весь
  []
 
-[20<./results/comparison/local_f3.png>]) (./sections/library.tex [21])
+) (./sections/library.tex [22] [23])
 
 Package caption Warning: Unused \captionsetup[table] on input line 84.
 See the caption package documentation for explanation.
 
-[22
+[24
 
 ] (./build/main.aux)
  ***********
@@ -1339,19 +1344,19 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 )
 
 Here is how much of LuaTeX's memory you used:
- 36998 strings out of 476553
+ 37014 strings out of 476553
  125027,1977958 words of node,token memory allocated
- 811 words of node memory still in use:
-   7 hlist, 2 vlist, 2 rule, 3 glue, 4 kern, 1 glyph, 43 attribute, 92 glue_spec, 23 attribute_list, 2 write nodes
-   avail lists: 1:2,2:4041,3:389,4:360,5:305,6:84,7:5425,8:51,9:717,10:15,11:871
- 57909 multiletter control sequences out of 65536+600000
+ 836 words of node memory still in use:
+   7 hlist, 2 vlist, 2 rule, 6 glue, 4 kern, 1 glyph, 44 attribute, 92 glue_spec, 24 attribute_list, 2 write nodes
+   avail lists: 1:2,2:4039,3:389,4:360,5:305,6:84,7:6729,8:50,9:717,10:15,11:1123
+ 57919 multiletter control sequences out of 65536+600000
  86 fonts using 14114543 bytes
  88i,10n,123p,461b,1077s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/truetype/google/noto/NotoSansMono-Bold.ttf></usr/share/texlive/texmf-dist/fonts/truetype/google/noto/NotoSansMono-Regular.ttf></usr/share/fonts/truetype/msttcorefonts/timesi.ttf></usr/share/fonts/truetype/msttcorefonts/Times_New_Roman_Bold.ttf></usr/share/fonts/truetype/msttcorefonts/times.ttf></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (23 pages, 3008537 bytes).
+Output written on main.pdf (25 pages, 3091682 bytes).
 
-PDF statistics: 377 PDF objects out of 1000 (max. 8388607)
- 288 compressed objects within 3 object streams
- 82 named destinations out of 1000 (max. 131072)
+PDF statistics: 389 PDF objects out of 1000 (max. 8388607)
+ 296 compressed objects within 3 object streams
+ 85 named destinations out of 1000 (max. 131072)
  168 words of extra memory for PDF output out of 10000 (max. 100000000)
 

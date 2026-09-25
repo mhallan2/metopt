@@ -1,12 +1,11 @@
 from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import numpy as np
+from pathlib import Path
 
 
 @dataclass
 class OptimizationResult:
-    """Единый результат метода, аналогичный по идее scipy.optimize.OptimizeResult."""
-
     x_min: float
     f_min: float
     n_evaluations: int
@@ -14,6 +13,8 @@ class OptimizationResult:
     evaluation_points: np.ndarray
     n_history: list[int] = field(default_factory=list)
     length_history: list[float] = field(default_factory=list)
+    f_best_history: list[float] = field(default_factory=list)
+    x_best_history: list[float] = field(default_factory=list)
     lipschitz_M: float | None = None
 
     @property
@@ -71,6 +72,7 @@ def visualize(
     x_min,
     x_neighbors,
     evaluation_points=None,
+    method_name="unknown",
 ):
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
@@ -93,11 +95,7 @@ def visualize(
             alpha=0.7,
         )
 
-    axes[0].axvline(
-        x_min,
-        linestyle="--",
-        label="Найденный минимум",
-    )
+    axes[0].axvline(x_min, linestyle="--", label="Найденный минимум", c="green")
     axes[0].scatter(
         x_neighbors,
         function(x_neighbors),
@@ -129,11 +127,7 @@ def visualize(
             alpha=0.7,
         )
 
-    axes[1].axvline(
-        x_min,
-        linestyle="--",
-        label="Найденный минимум",
-    )
+    axes[1].axvline(x_min, linestyle="--", label="Найденный минимум", c="green")
     axes[1].scatter(
         x_neighbors,
         function(x_neighbors),
@@ -158,6 +152,14 @@ def visualize(
     axes[1].grid()
 
     plt.tight_layout()
+
+    # Сохранение results/<method>/<function>.png
+    result_dir = Path("results") / method_name
+    result_dir.mkdir(parents=True, exist_ok=True)
+
+    file_path = result_dir / f"{function.__name__}.png"
+    fig.savefig(file_path, dpi=300, bbox_inches="tight")
+
     plt.show()
 
 
@@ -206,6 +208,7 @@ def passive(function, N=None, show=True):
             x_min,
             x_neighbors,
             x_grid_passive,
+            method_name="passive",
         )
 
     return OptimizationResult(
@@ -263,6 +266,7 @@ def dichotomy(function, N=None, show=True):
             x_min,
             np.array([left, right]),
             np.array(evaluation_points),
+            method_name="dichotomy",
         )
 
     return OptimizationResult(
@@ -406,6 +410,7 @@ def fibonacci(function, N=None, show=True):
             x_min,
             neighbors,
             np.array(evaluation_points),
+            method_name="fibonacci",
         )
 
     return OptimizationResult(
@@ -504,6 +509,7 @@ def golden_ratio(function, N=None, show=True):
             x_min,
             neighbors,
             np.array(evaluation_points),
+            method_name="golden_ratio",
         )
 
     return OptimizationResult(
@@ -598,6 +604,7 @@ def parabola(function, N=None, show=True):
                 x_min,
                 neighbors,
                 np.array(evaluation_points),
+                method_name="parabola",
             )
 
         print(f"Минимум (метод парабол) {x_min}")
@@ -673,6 +680,7 @@ def parabola(function, N=None, show=True):
             x_min,
             np.array([x0, x2]),
             np.array(evaluation_points),
+            method_name="parabola",
         )
 
     return OptimizationResult(
@@ -698,16 +706,28 @@ def visualize_convergence(method, function):
         f"{result.length_history[-1]}"
     )
 
-    plt.semilogy(
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    ax.semilogy(
         result.n_history,
         result.length_history,
         "o-",
         label=f"Метод {method.__name__}",
     )
-    plt.xlabel("Количество вычислений функции")
-    plt.ylabel("Длина интервала локализации")
-    plt.legend()
-    plt.grid()
+
+    ax.set_xlabel("Количество вычислений функции")
+    ax.set_ylabel("Длина интервала локализации")
+    ax.legend()
+    ax.grid()
+
+    plt.tight_layout()
+
+    result_dir = Path("results") / "convergence" / method.__name__
+    result_dir.mkdir(parents=True, exist_ok=True)
+
+    file_path = result_dir / f"{function.__name__}.png"
+    fig.savefig(file_path, dpi=300, bbox_inches="tight")
+
     plt.show()
 
 
@@ -720,24 +740,33 @@ def compare_convergence(function):
         ("Параболы", parabola),
     ]
 
-    plt.figure(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(8, 5))
 
     for name, method in methods:
         result = method(function, show=False)
 
         if result.length_history:
-            plt.semilogy(
+            ax.semilogy(
                 result.n_history,
                 result.length_history,
                 "o-",
                 label=name,
             )
 
-    plt.xlabel("Количество вычислений функции")
-    plt.ylabel("Длина интервала локализации")
-    plt.title("Сравнение скорости сходимости")
-    plt.legend()
-    plt.grid()
+    ax.set_xlabel("Количество вычислений функции")
+    ax.set_ylabel("Длина интервала локализации")
+    ax.set_title("Сравнение скорости сходимости")
+    ax.legend()
+    ax.grid()
+
+    plt.tight_layout()
+
+    result_dir = Path("results") / "convergence"
+    result_dir.mkdir(parents=True, exist_ok=True)
+
+    file_path = result_dir / f"comparison_{function.__name__}.png"
+    fig.savefig(file_path, dpi=300, bbox_inches="tight")
+
     plt.show()
 
 
@@ -771,7 +800,14 @@ def broken_lines(function, N=None, show=True):
     x_points = np.array([a, b])
     y_values = function(x_points)
 
+    best_idx = int(np.argmin(y_values))
     n_evaluations = 2
+
+    best_x = x_points[best_idx]
+    best_f = y_values[best_idx]
+
+    x_best_history = [best_x, best_x]
+    f_best_history = [best_f, best_f]
     # M оценивается только по уже вычисленным методом точкам
     # и адаптивно увеличивается по ходу поиска.
     current_M = max(
@@ -822,6 +858,13 @@ def broken_lines(function, N=None, show=True):
 
         n_evaluations += 1
 
+        if y_new < best_f:
+            best_f = y_new
+            best_x = x_new
+
+        x_best_history.append(best_x)
+        f_best_history.append(best_f)
+
         insert_index = np.searchsorted(x_points, x_new)
         x_points = np.insert(x_points, insert_index, x_new)
         y_values = np.insert(y_values, insert_index, y_new)
@@ -851,6 +894,7 @@ def broken_lines(function, N=None, show=True):
             x_min,
             neighbors,
             x_points,
+            method_name="broken_lines",
         )
 
     return OptimizationResult(
@@ -859,7 +903,9 @@ def broken_lines(function, N=None, show=True):
         n_evaluations=n_evaluations,
         neighbors=neighbors,
         evaluation_points=x_points,
+        f_best_history=f_best_history,
         lipschitz_M=current_M,
+        x_best_history=x_best_history,
     )
 
 
@@ -890,6 +936,19 @@ def search(function, N=None, show=True):
     min_index = np.argmin(y_values)
     x_min = x_points[min_index]
 
+    # кумулятивный лучший x по мере просмотра точек
+    best_so_far = np.inf
+    x_best_history = []
+    f_best_history = []
+    for xp, yp in zip(x_points, y_values):
+        if yp < best_so_far:
+            best_so_far = yp
+            best_x = xp
+        x_best_history.append(best_x)
+        f_best_history.append(best_so_far)
+
+    # f_best_history = np.minimum.accumulate(y_values).tolist()
+
     left_neighbor = max(a, x_min - 0.5 * step)
     right_neighbor = min(b, x_min + 0.5 * step)
     neighbors = np.array([left_neighbor, right_neighbor])
@@ -909,6 +968,7 @@ def search(function, N=None, show=True):
             x_min,
             neighbors,
             x_points,
+            method_name="search",
         )
 
     return OptimizationResult(
@@ -917,6 +977,8 @@ def search(function, N=None, show=True):
         n_evaluations=N,
         neighbors=neighbors,
         evaluation_points=x_points,
+        f_best_history=f_best_history,
+        x_best_history=x_best_history,
     )
 
 
@@ -984,67 +1046,205 @@ def compare_local_methods_equal_evaluations(function, N=20):
     names = [row[0] for row in results]
     interval_lengths = [row[4] for row in results]
 
-    plt.figure(figsize=(9, 5))
-    plt.bar(names, interval_lengths)
-    plt.yscale("log")
-    plt.ylabel("Длина интервала локализации")
-    plt.title(f"Одинаковое число вычислений: N = {N}")
-    plt.xticks(rotation=20)
-    plt.grid(axis="y")
+    fig, ax = plt.subplots(figsize=(9, 5))
+
+    ax.bar(names, interval_lengths)
+    ax.set_yscale("log")
+    ax.set_ylabel("Длина интервала локализации")
+    ax.set_title(f"Одинаковое число вычислений: N = {N}")
+    ax.tick_params(axis="x", rotation=20)
+    ax.grid(axis="y")
+
     plt.tight_layout()
+
+    result_dir = Path("results") / "comparison"
+    result_dir.mkdir(parents=True, exist_ok=True)
+
+    file_path = result_dir / f"local_{function.__name__}.png"
+    fig.savefig(file_path, dpi=300, bbox_inches="tight")
+
     plt.show()
 
 
-def compare_global_methods_equal_evaluations(function, N=325):
-    """Сравнение перебора и метода ломаных при одном бюджете N."""
-    x_reference, f_reference = reference_minimum(function)
+def compare_global_methods_equal_evaluations(function, N=320):
+    """
+    Сравнение глобальных методов при одинаковом числе вычислений функции.
+    Основной критерий: сходимость координаты минимума.
+    """
 
-    search_result = search(
+    x_ref, f_ref = reference_minimum(
         function,
-        N=N,
-        show=False,
-    )
-    broken_result = broken_lines(
-        function,
-        N=N,
-        show=False,
+        n_points=50000,
     )
 
-    results = [
-        (
-            "Перебор",
-            search_result,
-        ),
-        (
-            "Ломаные",
-            broken_result,
-        ),
+    methods = [
+        ("Перебор", search),
+        ("Ломаные", broken_lines),
     ]
 
-    print(f"\nСравнение глобальных методов при N = {N}")
-    print(
-        f"{'Метод':<15}{'Вычислений':>14}{'x_min':>16}{'|x - x*|':>16}{'|f - f*|':>16}"
-    )
+    results = []
+
+    for name, method in methods:
+        result = method(
+            function,
+            N=N,
+            show=False,
+        )
+
+        results.append((name, result))
+
+    print(f"\nСравнение глобальных методов при N={N}")
+    print(f"{'Метод':<15}{'N':>10}{'x_min':>15}{'|x-x*|':>15}{'f_min':>15}")
 
     for name, result in results:
         print(
             f"{name:<15}"
-            f"{result.n_evaluations:>14d}"
-            f"{result.x_min:>16.9f}"
-            f"{abs(result.x_min - x_reference):>16.6e}"
-            f"{abs(result.f_min - f_reference):>16.6e}"
+            f"{result.n_evaluations:>10}"
+            f"{result.x_min:>15.8f}"
+            f"{abs(result.x_min - x_ref):>15.3e}"
+            f"{result.f_min:>15.8f}"
         )
+
+    result_dir = Path("results") / "comparison"
+    result_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    # ============================
+    # 1. Сходимость координаты x
+    # ============================
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    for name, result in results:
+        x_history = np.asarray(result.x_best_history)
+
+        if len(x_history) == 0:
+            continue
+
+        error = np.abs(x_history - x_ref)
+
+        error = np.maximum(error, 1e-12)
+
+        evaluations = np.arange(1, len(error) + 1)
+
+        ax.semilogy(
+            evaluations,
+            error,
+            marker=".",
+            markersize=4,
+            linewidth=1,
+            label=name,
+        )
+
+    ax.set_xlabel("Количество вычислений функции")
+
+    ax.set_ylabel(r"$|x_k-x^*|$")
+
+    ax.set_title("Сходимость положения минимума")
+
+    ax.grid()
+    ax.legend()
+
+    plt.tight_layout()
+
+    fig.savefig(
+        result_dir / f"global_x_convergence_{function.__name__}.png",
+        dpi=300,
+        bbox_inches="tight",
+    )
+
+    plt.show()
+
+    # ============================
+    # 2. Сходимость значения функции
+    # ============================
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    for name, result in results:
+        f_history = np.asarray(result.f_best_history)
+
+        if len(f_history) == 0:
+            continue
+
+        error = np.abs(f_history - f_ref)
+
+        error = np.maximum(error, 1e-12)
+
+        evaluations = np.arange(1, len(error) + 1)
+
+        # ax.plot(
+        #     evaluations,
+        #     error,
+        #     marker="o",
+        #     markersize=3,
+        #     label=name,
+        # )
+        ax.semilogy(
+            evaluations,
+            error,
+            marker=".",
+            markersize=4,
+            linewidth=1,
+            label=name,
+        )
+
+    # ax.set_yscale("log")
+
+    ax.set_xlabel("Количество вычислений функции")
+
+    ax.set_ylabel(r"$|f_k-f^*|$")
+
+    ax.set_title("Сходимость значения функции")
+
+    ax.grid()
+    ax.legend()
+
+    plt.tight_layout()
+
+    fig.savefig(
+        result_dir / f"global_f_convergence_{function.__name__}.png",
+        dpi=300,
+        bbox_inches="tight",
+    )
+
+    plt.show()
+
+    return results
 
 
 # Примеры запуска:
+uni_functions = [f1, f2]
+poly_functions = [f3]
 
+uni_methods = [passive, dichotomy, fibonacci, golden_ratio, parabola]
+poly_methods = [broken_lines, search]
 
-broken_lines(f3)
-passive(f1)
-golden_ratio(f2)
+for f in poly_functions:
+    compare_global_methods_equal_evaluations(f, N=500)
 
-visualize_convergence(dichotomy, f1)
-compare_convergence(f1)
+# for f in uni_functions:
+#     compare_local_methods_equal_evaluations(f, N=20)
 
-compare_local_methods_equal_evaluations(f1, N=20)
-compare_global_methods_equal_evaluations(f3, N=325)
+# for f in uni_functions:
+#     for m in uni_methods:
+#         m(f)
+
+# for f in poly_functions:
+#     for m in poly_methods:
+#         m(f)
+
+# for f in uni_functions:
+#     compare_convergence(f)
+
+# broken_lines(f3)
+# passive(f1)
+# golden_ratio(f2)
+
+# visualize_convergence(dichotomy, f1)
+# compare_convergence(f1)
+
+# compare_local_methods_equal_evaluations(f1, N=20)
+# compare_global_methods_equal_evaluations(f3, N=325)

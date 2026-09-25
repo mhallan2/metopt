@@ -13,9 +13,9 @@
 \contentsline {subsubsection}{\numberline {3.3.1}Равномерный перебор}{10}{subsubsection.0.3.3.1}%
 \contentsline {subsubsection}{\numberline {3.3.2}Метод ломаных}{10}{subsubsection.0.3.3.2}%
 \contentsline {subsection}{\numberline {3.4}Визуализация и сравнение результатов}{12}{subsection.0.3.4}%
-\contentsline {section}{\numberline {4}Результаты вычислений}{12}{section.0.4}%
-\contentsline {subsection}{\numberline {4.1}Работа локальных методов}{12}{subsection.0.4.1}%
-\contentsline {subsection}{\numberline {4.2}Скорость сходимости локальных методов}{16}{subsection.0.4.2}%
-\contentsline {subsection}{\numberline {4.3}Глобальные методы}{18}{subsection.0.4.3}%
-\contentsline {subsection}{\numberline {4.4}Сравнение при одинаковом числе вычислений}{18}{subsection.0.4.4}%
-\contentsline {section}{\numberline {5}Вывод}{20}{section.0.5}%
+\contentsline {section}{\numberline {4}Результаты вычислений}{13}{section.0.4}%
+\contentsline {subsection}{\numberline {4.1}Работа локальных методов}{13}{subsection.0.4.1}%
+\contentsline {subsection}{\numberline {4.2}Скорость сходимости локальных методов}{17}{subsection.0.4.2}%
+\contentsline {subsection}{\numberline {4.3}Глобальные методы}{19}{subsection.0.4.3}%
+\contentsline {subsection}{\numberline {4.4}Сравнение при одинаковом числе вычислений}{19}{subsection.0.4.4}%
+\contentsline {section}{\numberline {5}Вывод}{22}{section.0.5}%
