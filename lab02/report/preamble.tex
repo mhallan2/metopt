@@ -1,0 +1,151 @@
+% Кодировка и язык
+\usepackage{fontspec}
+\usepackage[english,russian]{babel}
+
+\setmainfont{Times New Roman}
+\setmonofont[
+    Scale=MatchLowercase
+]{Noto Sans Mono}
+
+% Поля страницы
+\usepackage[
+    left=30mm,
+    right=15mm,
+    top=20mm,
+    bottom=20mm
+]{geometry}
+
+% Межстрочный интервал и абзацы
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+
+\usepackage{enumitem}
+
+\setlist[itemize]{
+    itemsep=0pt,
+    topsep=0.3em,
+    parsep=0pt,
+    partopsep=0pt
+}
+
+% Математика
+\usepackage{amsmath,amssymb}
+\newtheorem{definition}{Определение}[section]
+\newtheorem{theorem}{Теорема}[section]
+\newtheorem{proof}{Доказательство}[section]
+% Рисунки
+\usepackage{graphicx}
+\usepackage{float}
+
+% Заголовки
+\usepackage{titlesec}
+\usepackage{tocloft}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\renewcommand{\cftsecaftersnum}{.}
+\renewcommand{\cftsubsecaftersnum}{.}
+
+\setlength{\cftsecnumwidth}{2em}
+\setlength{\cftsubsecnumwidth}{3em}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
+\titleformat{\section}
+{\bfseries\Large\centering}
+{\thesection.}
+{0.5em}
+{}
+
+\titleformat{\subsection}
+{\bfseries\large}
+{\thesubsection.}
+{0.5em}
+{}
+
+% Таблицы
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{tabularray}
+
+% Подписи
+\usepackage{caption}
+\usepackage{subcaption}
+
+\captionsetup{
+    justification=centering,
+    labelsep=period
+}
+
+\captionsetup[table]{
+    font=small
+}
+
+% Цвета
+\usepackage{xcolor}
+
+% Код Python
+% --- 5. ОФОРМЛЕНИЕ КОДА (MINTED) ---
+\usepackage[outputdir=build]{minted}
+
+\usepackage{tcolorbox}
+\definecolor{bg}{gray}{0.95}
+\tcbuselibrary{minted,breakable,xparse,skins}
+\DeclareTCBListing{mintedbox}{O{}m!O{}}{%
+  breakable=true,
+  listing engine=minted,
+  listing only,
+  minted language=#2,
+  minted style=default,
+  minted options={linenos,gobble=0,breaklines=true,breakafter=,,fontsize=\small,numbersep=8pt,#1},
+  boxsep=0pt,
+  left=25pt, right=0pt, top=3pt, bottom=3pt,
+  arc=5pt,
+  colback=bg,
+  colframe=orange!70,
+  enhanced,
+  overlay={%
+    \begin{tcbclipinterior}
+    \fill[orange!20!white] (frame.south west) rectangle ([xshift=20pt]frame.north west);
+    \end{tcbclipinterior}},
+  #3}
+
+\tcbuselibrary{minted,breakable,xparse,skins}
+
+\newcommand{\inputmintedbox}[3][]{%
+    \begin{tcolorbox}[
+        breakable,
+        enhanced,
+        boxsep=0pt,
+        left=25pt,
+        right=0pt,
+        top=3pt,
+        bottom=3pt,
+        arc=5pt,
+        colback=bg,
+        colframe=orange!70,
+        overlay={%
+            \begin{tcbclipinterior}
+            \fill[orange!20!white]
+                (frame.south west)
+                rectangle ([xshift=20pt]frame.north west);
+            \end{tcbclipinterior}
+        }
+    ]
+        \inputminted[
+            linenos,
+            breaklines,
+            fontsize=\small,
+            numbersep=8pt,
+            #1
+        ]{#2}{#3}
+    \end{tcolorbox}%
+}
+
+\usepackage{relsize}
+
+% Ссылки
+\usepackage[hidelinks]{hyperref}
