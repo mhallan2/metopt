@@ -1,26 +1,26 @@
+#lab02-3.py
 import numpy as np
 from matplotlib import pyplot as plt
 
 
 def is_convex(points):
     n = len(points)
-
+    
     if n < 3:
         return False
 
     orientation = 0
-
     for i in range(n):
         edge_a = points[(i + 1) % n] - points[i]
         edge_b = points[(i + 2) % n] - points[(i + 1) % n]
-
         current_orientation = orientation_of_cross(edge_a, edge_b)
 
         if current_orientation == 0:
             continue
-
+        
         if orientation == 0:
             orientation = current_orientation
+            
         elif current_orientation != orientation:
             return False
 
