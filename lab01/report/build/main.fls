@@ -1,4 +1,4 @@
-PWD /mnt/c/Users/mhallan/prog/metopt/metopt_report
+PWD /mnt/c/Users/mhallan/prog/metopt/lab01/report
 INPUT /var/lib/texmf/web2c/luahbtex/lualatex.fmt
 INPUT ./main.tex
 OUTPUT build/main.log
