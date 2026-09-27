@@ -20,8 +20,7 @@ inner_points = points[~mask]
 if __name__ == "__main__":
     plt.figure(figsize=(8, 6))
     plt.scatter(
-        inner_points[:, 0],
-        inner_points[:, 1],
+        *inner_points.T,
         s=10,
         marker="o",
         label="Random Points",
@@ -29,16 +28,14 @@ if __name__ == "__main__":
         alpha=0.5,
     )
     plt.scatter(
-        hull_vertices[:, 0],
-        hull_vertices[:, 1],
+        *hull_vertices.T,
         s=10,
         marker="o",
         label="Convex Hull Points",
         c="red",
     )
     plt.fill(
-        points[vertex_indices][:, 0],
-        points[vertex_indices][:, 1],
+        *hull_vertices.T,
         color="lightgreen",
         alpha=0.4,
     )

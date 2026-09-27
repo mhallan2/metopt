@@ -1,0 +1,7 @@
+# LaTeX build artifacts
+/build/*
+!/build/.gitkeep
+/main.synctex.gz
+
+# minted cache directories
+**/_minted-*/

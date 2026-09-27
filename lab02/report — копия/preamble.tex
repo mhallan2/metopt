@@ -19,7 +19,6 @@
 \usepackage{setspace}
 \onehalfspacing
 \setlength{\parindent}{1.25cm}
-\usepackage{needspace}
 
 \usepackage{enumitem}
 
@@ -87,11 +86,10 @@
 
 % Цвета
 \usepackage{xcolor}
- 
+
 % Код Python
 % --- 5. ОФОРМЛЕНИЕ КОДА (MINTED) ---
 \usepackage[outputdir=build]{minted}
-% \usemintedstyle{term}
 
 \usepackage{tcolorbox}
 \definecolor{bg}{gray}{0.95}
@@ -115,6 +113,7 @@
     \end{tcbclipinterior}},
   #3}
 
+\tcbuselibrary{minted,breakable,xparse,skins}
 
 \newcommand{\inputmintedbox}[3][]{%
     \begin{tcolorbox}[
@@ -146,65 +145,6 @@
     \end{tcolorbox}%
 }
 
-% % ---- Цвета "консоли" ----
-% ---- Цвета консоли ----
-\definecolor{termbg}{HTML}{1E1E1E}
-\definecolor{termfg}{HTML}{D4D4D4}
-\definecolor{termbar}{HTML}{2D2D2D}
-\definecolor{termframe}{HTML}{3C3C3C}
-\definecolor{termaccent}{HTML}{4EC9B0}
-\definecolor{bashgreen}{HTML}{4ECA3A}
-\definecolor{bashblue}{HTML}{5C8AFF}
-
-% Приглашение терминала — настраивается один раз
-% \newcommand{\consoleprompt}{%
-%     (.venv)\ %
-%     \textcolor{bashgreen}{mhallan@linux}%
-%     :%
-%     \textcolor{bashblue}{\textasciitilde/prog/metopt}%
-%     \$%
-% }
-
-% #1 — дополнительные настройки окна
-% #2 — команда
-\DeclareTCBListing{consolebox}{O{}}{
-    enhanced,
-    breakable,
-    listing only,
-    listing engine=minted,
-    minted language=linuxconsole,
-    minted style=linuxterm,
-    minted options={
-        linenos=false,
-        breaklines=true,
-        fontsize=\small
-    },
-    colback=termbg,
-    coltext=termfg,
-    colframe=termframe,
-    boxrule=0.5pt,
-    arc=3mm,
-    boxsep=0pt,
-    left=4mm,
-    right=4mm,
-    top=3mm,
-    bottom=3mm,
-    colbacktitle=termbar,
-    coltitle=termaccent,
-    fonttitle=\ttfamily\small\bfseries,
-    title={
-        \textcolor{red!75}{\textbullet}\,
-        \textcolor{yellow!80}{\textbullet}\,
-        \textcolor{green!65}{\textbullet}
-        \hspace{2mm} TERMINAL
-    },
-    titlerule=0pt,
-    toptitle=2mm,
-    bottomtitle=2mm,
-    before skip=10pt,
-    after skip=10pt,
-    #1
-}
 \usepackage{relsize}
 
 % Ссылки

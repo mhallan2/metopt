@@ -20,12 +20,7 @@ Y, X = np.mgrid[y_min:y_max:step, x_min:x_max:step]
 
 mask_A = in_A(X, Y)
 mask_B = in_B(X, Y)
-mask_AB = mask_A & mask_B
-
-img = np.zeros(X.shape, dtype=int)
-img[mask_A & ~mask_B] = 1
-img[mask_B & ~mask_A] = 2
-img[mask_A & mask_B] = 3
+img = mask_A + 2 * mask_B # A = 1, B = 2, A ∩ B = 3
 
 legend_elements = [
     Patch(facecolor="blue", label="A"),

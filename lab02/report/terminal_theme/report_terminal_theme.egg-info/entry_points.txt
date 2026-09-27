@@ -1,0 +1,5 @@
+[pygments.lexers]
+linuxconsole = terminal_theme:LinuxConsoleLexer
+
+[pygments.styles]
+linuxterm = terminal_theme:LinuxTerminalStyle

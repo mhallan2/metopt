@@ -1,0 +1,8 @@
+pyproject.toml
+terminal_theme.py
+report_terminal_theme.egg-info/PKG-INFO
+report_terminal_theme.egg-info/SOURCES.txt
+report_terminal_theme.egg-info/dependency_links.txt
+report_terminal_theme.egg-info/entry_points.txt
+report_terminal_theme.egg-info/requires.txt
+report_terminal_theme.egg-info/top_level.txt
