@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
+from matplotlib.ticker import MaxNLocator
 
 
 @dataclass
@@ -171,64 +172,68 @@ def passive(function, N=None, show=True):
     if N is None:
         N = int(np.ceil((b - a) / eps)) - 1
 
-        if N % 2 == 0:
-            N += 1
-
     if N <= 0:
         raise ValueError("N должно быть положительным")
 
-    if N % 2 == 1:
-        step = (b - a) / (N + 1)
+    length_history = np.empty(N)
+    n_history = np.arange(1, N + 1)
 
-        x_grid_passive = a + step * np.arange(1, N + 1)
+    # Эти переменные будут заполнены на последней итерации
+    x_grid_passive = None
+    values = None
+    min_idx = None
 
-    else:
-        k = N // 2
+    for i in range(N):
+        current_N = i + 1
 
-        centers = a + (b - a) / (k + 1) * np.arange(1, k + 1)
+        # Новая сетка для текущего числа измерений
+        if current_N % 2 == 1:
+            step = (b - a) / (current_N + 1)
 
-        x_grid_passive = np.empty(N)
+            x_grid_current = a + step * np.arange(1, current_N + 1)
 
-        x_grid_passive[0::2] = centers - delta
-        x_grid_passive[1::2] = centers
+        else:
+            k = current_N // 2
 
-        x_grid_passive.sort()
+            centers = a + (b - a) / (k + 1) * np.arange(1, k + 1)
 
-    values = np.empty(N)
+            x_grid_current = np.empty(current_N)
 
-    n_history = []
-    length_history = []
+            x_grid_current[0::2] = centers - delta
+            x_grid_current[1::2] = centers
+            x_grid_current.sort()
 
-    best_idx = 0
-    left = a
-    right = b
+        # Вычисления для новой сетки
+        values_current = np.array([function(x) for x in x_grid_current])
 
-    for i, x in enumerate(x_grid_passive):
-        values[i] = function(x)
+        current_min_idx = np.argmin(values_current)
 
-        # Сетка отсортирована, поэтому обновляем лучший индекс за O(1).
-        if values[i] < values[best_idx]:
-            best_idx = i
+        left = a if current_min_idx == 0 else x_grid_current[current_min_idx - 1]
 
-        # Скобка минимума по уже вычисленным точкам: ближайшие
-        # измеренные соседи лучшей точки (или край интервала).
-        left = a if best_idx == 0 else x_grid_passive[best_idx - 1]
-        right = b if best_idx == i else x_grid_passive[best_idx + 1]
+        right = (
+            b
+            if current_min_idx == current_N - 1
+            else x_grid_current[current_min_idx + 1]
+        )
 
-        n_history.append(i + 1)
-        length_history.append(right - left)
+        length_history[i] = right - left
 
-    min_idx = np.argmin(values)
+        # Сохраняем последнюю сетку для результата и визуализации
+        if i == N - 1:
+            x_grid_passive = x_grid_current
+            values = values_current
+            min_idx = current_min_idx
+
     x_min = x_grid_passive[min_idx]
 
     left = a if min_idx == 0 else x_grid_passive[min_idx - 1]
 
-    right = b if min_idx == len(x_grid_passive) - 1 else x_grid_passive[min_idx + 1]
+    right = b if min_idx == N - 1 else x_grid_passive[min_idx + 1]
 
     x_neighbors = np.array([left, right])
 
     print(f"Минимум (пассивный): {x_min}")
-    print(f"Количество вычислений функции: {N}")
+    print(f"Количество измерений: {N}")
 
     if show:
         visualize(
@@ -243,7 +248,7 @@ def passive(function, N=None, show=True):
 
     return OptimizationResult(
         x_min=x_min,
-        f_min=function(x_min),
+        f_min=values[min_idx],
         n_evaluations=N,
         neighbors=x_neighbors,
         evaluation_points=x_grid_passive,
@@ -345,7 +350,7 @@ def fibonacci(function, N=None, show=True):
     left, right = 0.0, 1.0
 
     normalized_function = lambda x: function(a + (b - a) * x)
-    normalized_delta = delta / (b - a)
+    normalized_eps = eps / (b - a)
 
     if N is None:
         fib_need = (b - a) / (eps - delta)
@@ -374,16 +379,13 @@ def fibonacci(function, N=None, show=True):
     length_history = []
 
     while n > 3:
+        if right - left <= normalized_eps:
+            break
         if f1_value < f2_value:
             right = x2
-
             x2 = x1
             f2_value = f1_value
-
             n -= 1
-
-            n_history.append(n_evaluations)
-            length_history.append((b - a) * (right - left))
 
             if n == 3:
                 break
@@ -396,14 +398,9 @@ def fibonacci(function, N=None, show=True):
 
         else:
             left = x1
-
             x1 = x2
             f1_value = f2_value
-
             n -= 1
-
-            n_history.append(n_evaluations)
-            length_history.append((b - a) * (right - left))
 
             if n == 3:
                 break
@@ -414,27 +411,28 @@ def fibonacci(function, N=None, show=True):
             evaluation_points.append(a + (b - a) * x2)
             n_evaluations += 1
 
-    x2 = x1 + normalized_delta
-    f2_value = normalized_function(x2)
+        # Только одна запись за итерацию
+        n_history.append(n_evaluations)
+        length_history.append((b - a) * (right - left))
+        # x2 = min(x1 + normalized_eps, right)
 
-    evaluation_points.append(a + (b - a) * x2)
-    n_evaluations += 1
+        # f2_value = normalized_function(x2)
 
-    if f1_value < f2_value:
-        right = x2
-    else:
-        left = x1
+        # evaluation_points.append(a + (b - a) * x2)
+        # n_evaluations += 1
 
-    n_history.append(n_evaluations)
-    length_history.append((b - a) * (right - left))
+        # if f1_value < f2_value:
+        #     right = x2
+        # else:
+        #     left = x1
+        x_min = a + (b - a) * (left + right) / 2.0
 
-    x_min = a + (b - a) * (left + right) / 2.0
-    neighbors = np.array(
-        [
-            a + (b - a) * left,
-            a + (b - a) * right,
-        ]
-    )
+        neighbors = np.array(
+            [
+                a + (b - a) * left,
+                a + (b - a) * right,
+            ]
+        )
 
     print(f"Минимум (метод Фибоначчи) {x_min}")
     print(f"Количество вычислений функции (метод Фибоначчи) {n_evaluations}")
@@ -485,6 +483,8 @@ def golden_ratio(function, N=None, show=True):
     length_history = []
 
     while True:
+        if right - left <= normalized_eps:
+            break
         if f1_value < f2_value:
             right = x2
 
@@ -660,7 +660,9 @@ def parabola(function, N=None, show=True):
     (x0, x1, x2) = bracket
     (y0, y1, y2) = values
 
-    while x2 - x0 > eps:
+    x_history = [x1]
+
+    while True:
         if N is not None and n_evaluations >= N:
             break
 
@@ -673,49 +675,64 @@ def parabola(function, N=None, show=True):
             y2,
         )
 
-        use_parabola = extremum is not None
+        # Обычный параболический шаг
+        parabola_step = (
+            extremum is not None and x0 < extremum < x2 and not np.isclose(extremum, x1)
+        )
 
-        if use_parabola and (not x0 < extremum < x2 or np.isclose(extremum, x1)):
-            use_parabola = False
+        if parabola_step:
+            x_new = extremum
 
-        if not use_parabola:
-            if x1 - x0 > x2 - x1:
-                extremum = 0.5 * (x0 + x1)
+        else:
+            # Безопасный шаг: проверяем более широкую сторону
+            if x1 - x0 >= x2 - x1:
+                x_new = 0.5 * (x0 + x1)
             else:
-                extremum = 0.5 * (x1 + x2)
+                x_new = 0.5 * (x1 + x2)
 
-        y_extremum = function(extremum)
-        evaluation_points.append(extremum)
+        # Защита от повторного вычисления той же точки
+        if np.isclose(x_new, x0) or np.isclose(x_new, x1) or np.isclose(x_new, x2):
+            break
+
+        y_new = function(x_new)
+
+        evaluation_points.append(x_new)
         n_evaluations += 1
 
-        if extremum < x1:
-            if y_extremum < y1:
+        # Обновление тройки точек
+        if x_new < x1:
+            if y_new < y1:
                 x2, y2 = x1, y1
-                x1, y1 = extremum, y_extremum
+                x1, y1 = x_new, y_new
             else:
-                x0, y0 = extremum, y_extremum
+                x0, y0 = x_new, y_new
+
         else:
-            if y_extremum < y1:
+            if y_new < y1:
                 x0, y0 = x1, y1
-                x1, y1 = extremum, y_extremum
+                x1, y1 = x_new, y_new
             else:
-                x2, y2 = extremum, y_extremum
+                x2, y2 = x_new, y_new
+
+        x_history.append(x1)
 
         n_history.append(n_evaluations)
         length_history.append(x2 - x0)
 
-    x_min = 0.5 * (x0 + x2)
+    x_min = x1
+    neighbors = np.array([x0, x2])
 
     print(f"Минимум (метод парабол) {x_min}")
     print(f"Количество вычислений функции (метод парабол) {n_evaluations}")
-
+    ratios = np.array(length_history[1:]) / np.array(length_history[:-1])
+    print(ratios)
     if show:
         visualize(
             function,
             x_grid,
             function(x_grid),
             x_min,
-            np.array([x0, x2]),
+            neighbors,
             np.array(evaluation_points),
             method_name="parabola",
         )
@@ -724,7 +741,7 @@ def parabola(function, N=None, show=True):
         x_min=x_min,
         f_min=function(x_min),
         n_evaluations=n_evaluations,
-        neighbors=np.array([x0, x2]),
+        neighbors=neighbors,
         evaluation_points=np.array(evaluation_points),
         n_history=n_history,
         length_history=length_history,
@@ -768,7 +785,7 @@ def visualize_convergence(method, function):
     plt.show()
 
 
-def compare_convergence(function, N=None, methods=None):
+def compare_convergence(function, N=50, methods=None):
     """Строит на одном графике длину локализации от числа вычислений."""
     if methods is None:
         methods = [
@@ -786,7 +803,7 @@ def compare_convergence(function, N=None, methods=None):
     for name, method in methods:
         result = method(function, N=N, show=False)
 
-        if result.length_history:
+        if len(result.length_history) > 0:
             ax.semilogy(
                 result.n_history,
                 result.length_history,
@@ -800,6 +817,7 @@ def compare_convergence(function, N=None, methods=None):
     ax.set_ylabel("Длина интервала локализации")
     ax.set_title("Сравнение скорости сходимости")
     ax.legend()
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
     ax.grid()
 
     plt.tight_layout()
@@ -1282,14 +1300,116 @@ poly_methods = [broken_lines, search]
 # for f in poly_functions:
 #     for m in poly_methods:
 #         m(f)
-search(f3)
+# search(f3)
 
 # broken_lines(f3)
 # passive(f1)
 # golden_ratio(f2)
 
+# for f in uni_functions + poly_functions:
+#     compare_convergence(f, N=80)
+
+# passive(f1)
 # visualize_convergence(dichotomy, f1)
 # compare_convergence(f1)
 
+
 # compare_local_methods_equal_evaluations(f1, N=20)
 # compare_global_methods_equal_evaluations(f3, N=325)
+def compare_global_convergence(function, N=320):
+    """
+    Сравнение глобальных методов при одинаковом числе
+    вычислений функции.
+    """
+
+    x_ref, f_ref = reference_minimum(
+        function,
+        n_points=500_000,
+    )
+
+    methods = [
+        ("Перебор", search),
+        ("Ломаные", broken_lines),
+    ]
+
+    results = []
+
+    for name, method in methods:
+        result = method(
+            function,
+            N=N,
+            show=False,
+        )
+
+        results.append((name, result))
+
+    fig, axes = plt.subplots(
+        1,
+        2,
+        figsize=(12, 5),
+    )
+
+    for name, result in results:
+        x_history = np.asarray(result.x_best_history)
+
+        f_history = np.asarray(result.f_best_history)
+
+        n_history = np.arange(
+            1,
+            len(x_history) + 1,
+        )
+
+        x_error = np.abs(x_history - x_ref)
+        f_error = np.abs(f_history - f_ref)
+
+        # Защита от log(0)
+        x_error = np.maximum(x_error, 1e-15)
+        f_error = np.maximum(f_error, 1e-15)
+
+        axes[0].semilogy(
+            n_history,
+            x_error,
+            marker=".",
+            label=name,
+        )
+
+        axes[1].semilogy(
+            n_history,
+            f_error,
+            marker=".",
+            label=name,
+        )
+
+    axes[0].set_title("Сходимость координаты минимума")
+    axes[0].set_xlabel("Количество вычислений функции")
+    axes[0].set_ylabel(r"$|x_k-x^*|$")
+
+    axes[1].set_title("Сходимость значения функции")
+    axes[1].set_xlabel("Количество вычислений функции")
+    axes[1].set_ylabel(r"$|f(x_k)-f(x^*)|$")
+
+    for axis in axes:
+        axis.grid()
+        axis.legend()
+        axis.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+    plt.tight_layout()
+
+    result_dir = Path("results") / "convergence"
+    result_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    file_path = result_dir / f"global_comparison_{function.__name__}.png"
+
+    fig.savefig(
+        file_path,
+        dpi=300,
+        bbox_inches="tight",
+    )
+
+    plt.show()
+
+
+compare_global_convergence(f3, N=320)

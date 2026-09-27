@@ -59,13 +59,34 @@ class OptimizationResult:
 При пассивном поиске исходный интервал разбивается на равномерную сетку.
 Значение функции вычисляется в каждой внутренней точке, после чего выбирается
 точка с наименьшим значением функции. Соседние точки сетки образуют итоговый
-отрезок локализации.
+отрезок локализации, который уменьшается обратнопропорционально числу вычислений функции.
 
-Число точек выбирается из требования к погрешности координаты:
+Число точек выбирается из требования к погрешности координаты. 
 
 \begin{equation}
-N \geq \frac{b-a}{2\varepsilon}.
+N \geq \frac{b-a}{\varepsilon} - 1.
 \end{equation}
+
+\begin{mintedbox}{python}
+def passive_search(function):
+    #...
+    N = int(np.ceil((b - a) / eps)) - 1
+    N = N if N \% 2 == 1 else N - 1  # Для удобства нечетное число точек
+    x_points = np.linspace(a, b, N + 2)
+    f_values = function(x_points)
+    n_evaluations += len(x_points)
+
+    min_index = np.argmin(f_values)
+    x_min, f_min = x_points[min_index], f_values[min_index]
+
+    if min_index == 0:
+        neighbors = (x_points[0], x_points[1])
+    elif min_index == len(x_points) - 1:
+        neighbors = (x_points[-2], x_points[-1])
+    else:
+        neighbors = (x_points[min_index - 1], x_points[min_index + 1])
+    #...
+\end{mintedbox}
 
 \subsubsection{Метод дихотомии}
 
@@ -78,25 +99,26 @@ x_2 = \frac{a+b}{2} + \delta.
 \end{equation}
 
 Если $f(x_1) < f(x_2)$, правая граница заменяется точкой $x_2$; иначе левая
-граница заменяется точкой $x_1$. Процесс продолжается до достижения заданной
-длины интервала.
+граница заменяется точкой $x_1$. Процесс продолжается до достижения
+заданной длины интервала. Отрезок локализации сужается
+экспоненицально, но с большей константой по сравнению с методами Фибоначчи и золотого сечения.
 
 \begin{mintedbox}{python}
-    def dichotomy(function):
-        #...
-        while right - left > eps:
-            middle = 0.5 * (left + right)
+def dichotomy(function):
+    #...
+    while right - left > eps:
+        middle = 0.5 * (left + right)
 
-            x1, x2 = middle - delta, middle + delta
-            f1_value, f2_value = function(x1), function(x2)
+        x1, x2 = middle - delta, middle + delta
+        f1_value, f2_value = function(x1), function(x2)
 
-            if f1_value < f2_value:
-                right = x2
-            else:
-                left = x1
-        
-        x_min = 0.5 * (left + right)
-        #...
+        if f1_value < f2_value:
+            right = x2
+        else:
+            left = x1
+    
+    x_min = 0.5 * (left + right)
+    #...
 \end{mintedbox}
 
 \subsubsection{Методы Фибоначчи и золотого сечения}
@@ -105,44 +127,74 @@ x_2 = \frac{a+b}{2} + \delta.
 чисел Фибоначчи. Перед началом итераций определяется такое число $n$, чтобы
 после заданного количества сужений длина интервала стала меньше требуемой
 точности. На каждой следующей итерации одна из уже вычисленных точек сохраняется,
-поэтому требуется только одно новое вычисление функции.
+поэтому требуется только одно новое вычисление функции. 
+
+\begin{definition}[$\delta$-оптимальность]
+Алгоритм поиска минимума называется $\delta$-оптимальным, если после
+заданного числа вычислений функции он гарантирует локализацию точки
+минимума в отрезке длины не более $\delta$:
+
+\[
+|I_N| \leq \delta.
+\]
+\end{definition}
+
+\begin{theorem}[Теорема Кифера об оптимальности метода Фибоначчи]
+Пусть функция $f$ является унимодальной на отрезке $[a,b]$, а вычисления
+значений функции выполняются последовательно. Тогда среди всех
+последовательных методов, использующих не более $N$ вычислений функции,
+метод Фибоначчи обеспечивает минимально возможную в наихудшем случае
+длину итогового интервала локализации минимума.
+\end{theorem}
+
+Иными словами,
+
+\[
+L_N^{\mathrm{Fib}}
+\leq
+L_N^{\mathrm{alg}},
+\]
+
+где $L_N^{\mathrm{Fib}}$ --- длина интервала, гарантируемая методом
+Фибоначчи, а $L_N^{\mathrm{alg}}$ --- длина интервала, гарантируемая
+любым другим последовательным алгоритмом.
 
 \begin{mintedbox}{python}
-    def fibonacci(function):
-        fib_need = (b - a) / (eps - delta)
-        n = fibonacci_numbers_until(fib_need)
-        # Выбираем в качестве [left, right] нормализованный интервал [0, 1]
-        x1 = left + (right - left) * fib(n - 2) / fib(n)
-        x2 = left + (right - left) * fib(n - 1) / fib(n)
-        #...
-        while n > 3:
-            if f1_value < f2_value:
-                right = x2
-                x2, f2_value = x1, f1_value
-                n -= 1
-                if n == 3: # F(1)/F(3) = F(2)/F(3) = 0.5
-                    break
-                x1 = left + (right - left) * fib(n - 2) / fib(n)
-                f1_value = normalized_function(x1)
-                n_evaluations += 1
-            else:
-                left = x1
-                x1, f1_value = x2, f2_value
-                n -= 1
-                if n == 3:
-                    break
-                x2 = left + (right - left) * fib(n - 1) / fib(n)
-                f2_value = normalized_function(x2)
-                n_evaluations += 1
-        x2 = x1 + normalized_delta
-        f2_value = normalized_function(x2)
+def fibonacci(function):
+    fib_need = (b - a) / (eps - delta)
+    n = fibonacci_numbers_until(fib_need)
+    # Выбираем в качестве [left, right] нормализованный интервал [0, 1]
+    x1 = left + (right - left) * fib(n - 2) / fib(n)
+    x2 = left + (right - left) * fib(n - 1) / fib(n)
+    #...
+    while n > 3:
         if f1_value < f2_value:
             right = x2
+            x2, f2_value = x1, f1_value
+            n -= 1
+            if n == 3: # F(1)/F(3) = F(2)/F(3) = 0.5
+                break
+            x1 = left + (right - left) * fib(n - 2) / fib(n)
+            f1_value = normalized_function(x1)
+            n_evaluations += 1
         else:
             left = x1
-        # Вычисление в исходных координатах
-        x_min = a + (b - a) * (left + right) / 2.0
-        #...
+            x1, f1_value = x2, f2_value
+            n -= 1
+            if n == 3:
+                break
+            x2 = left + (right - left) * fib(n - 1) / fib(n)
+            f2_value = normalized_function(x2)
+            n_evaluations += 1
+    x2 = x1 + normalized_delta
+    f2_value = normalized_function(x2)
+    if f1_value < f2_value:
+        right = x2
+    else:
+        left = x1
+    # Вычисление в исходных координатах
+    x_min = a + (b - a) * (left + right) / 2.0
+    #...
 \end{mintedbox}
 
 \newpage
@@ -155,41 +207,43 @@ x_2 = \frac{a+b}{2} + \delta.
 
 В отличие от метода Фибоначчи, коэффициент сужения не меняется от итерации к
 итерации. Это позволяет применять один и тот же шаг до достижения требуемой
-точности. Этот метод можно считать частным случаем метода Фибоначчи при $n \to \infty$.
+точности. Этот метод можно считать частным случаем метода Фибоначчи
+при $n \to \infty$. Этот метод, как и алгоритм Фибоначчи, сужает длину
+отрезка локализации экспоненциально.
 
 \begin{mintedbox}{python}
-    def golden_section(function):
-        #...
-        while True:
-            if f1_value < f2_value:
-                right = x2
-                x2, f2_value = x1, f1_value
+def golden_section(function):
+    #...
+    while True:
+        if f1_value < f2_value:
+            right = x2
+            x2, f2_value = x1, f1_value
 
-                if right - left <= normalized_eps:
-                    break
-                # Критерий остановки по числу вычислений
-                elif n_evaluations >= N:
-                    break
+            if right - left <= normalized_eps:
+                break
+            # Критерий остановки по числу вычислений
+            elif n_evaluations >= N:
+                break
 
-                x1 = left + (right - left) / phi**2
-                f1_value = normalized_function(x1)
-                n_evaluations += 1
+            x1 = left + (right - left) / phi**2
+            f1_value = normalized_function(x1)
+            n_evaluations += 1
 
-            else:
-                left = x1
-                x1, f1_value = x2, f2_value
+        else:
+            left = x1
+            x1, f1_value = x2, f2_value
 
-                if right - left <= normalized_eps:
-                    break
-                elif n_evaluations >= N:
-                    break
+            if right - left <= normalized_eps:
+                break
+            elif n_evaluations >= N:
+                break
 
-                x2 = left + (right - left) / phi
-                f2_value = normalized_function(x2)
-                n_evaluations += 1
+            x2 = left + (right - left) / phi
+            f2_value = normalized_function(x2)
+            n_evaluations += 1
 
-        x_min = a + (b - a) * (left + right) / 2.0
-        #...
+    x_min = a + (b - a) * (left + right) / 2.0
+    #...
 \end{mintedbox}
 
 \newpage
@@ -209,29 +263,29 @@ x_0 < x_1 < x_2, \qquad f_1 < f_0, \qquad f_1 < f_2.
 используется процедура схожая по принципу с методом дихотомии.
 
 \begin{mintedbox}{python}
-    def bracketing(function, interval, N=None):
+def bracketing(function, interval, N=None):
+    #...
+    while True:
         #...
-        while True:
-            #...
-            middle, f_middle = (left + right) / 2.0, function(middle)
-            n_evaluations += 1
+        middle, f_middle = (left + right) / 2.0, function(middle)
+        n_evaluations += 1
 
-            if f_middle < f_left and f_middle < f_right:
-                # Возвращаем искомую тройку точек и значения функции в них,
-                # чтобы не пересчитывать повторно.
-                return (
-                    (left, middle, right),
-                    (f_left, f_middle, f_right),
-                    n_evaluations,
-                    #...
-                )
-            #...
-            if f_left < f_middle:
-                right = middle
-                f_right = f_middle
-            else:
-                left = middle
-                f_left = f_middle
+        if f_middle < f_left and f_middle < f_right:
+            # Возвращаем искомую тройку точек и значения функции в них,
+            # чтобы не пересчитывать повторно.
+            return (
+                (left, middle, right),
+                (f_left, f_middle, f_right),
+                n_evaluations,
+                #...
+            )
+        #...
+        if f_left < f_middle:
+            right = middle
+            f_right = f_middle
+        else:
+            left = middle
+            f_left = f_middle
 \end{mintedbox}
 
 Если параболическая аппроксимация вырождается или вершина находится вне текущего
@@ -282,6 +336,8 @@ def parabola(function, N=None, show=True):
     #...
 \end{mintedbox}
 
+У метода парабол наблюдается сверхлинейная скорость сходимости, что делает его эффективным при минимизации гладких функций. Однако длина интервала локализации может уменьшаться неравномерно, поэтому график её зависимости от числа вычислений может иметь нерегулярный вид и не всегда непосредственно отражает скорость сходимости приближения к минимуму.
+
 \subsection{Глобальные методы}
 
 Для мультимодальных функций в программе реализованы равномерный перебор
@@ -297,6 +353,32 @@ def parabola(function, N=None, show=True):
 \[
 \|x_{\min} - x^*\| \leq \frac{b-a}{2N}.
 \]
+
+\begin{mintedbox}{python}
+def search(function):
+    M = find_lipschitz_constant(function, a, b)
+    N = int(np.ceil(M * (b - a) / (2.0 * eps_f)))
+    step = (b - a) / N
+
+    x_points = a + (np.arange(N) + 0.5) * step
+    y_values = function(x_points)
+
+    min_index = np.argmin(y_values)
+    x_min, f_min = x_points[min_index], y_values[min_index]
+
+    left_neighbor = max(a, x_min - 0.5 * step)
+    right_neighbor = min(b, x_min + 0.5 * step)
+    neighbors = np.array([left_neighbor, right_neighbor])
+    #...
+\end{mintedbox}
+
+\begin{mintedbox}{python}
+def find_lipschitz_constant(function, a, b, N=1000):
+    x_points = np.linspace(a, b, N)
+    y_values = function(x_points)
+    slopes = np.abs(np.diff(y_values) / np.diff(x_points))
+    return np.max(slopes)
+\end{mintedbox}
 
 Для анализа процесса поиска в программе сохраняются последовательности лучших
 найденных значений $x_k$ и $f_k$ после каждого вычисления функции.
@@ -377,17 +459,3 @@ def broken_lines(function, N=None, show=True):
     index_min = np.argmin(y_values)
     x_min = x_points[index_min]
 \end{mintedbox}
-
-\subsection{Визуализация и сравнение результатов}
-
-Функция \texttt{visualize} строит два графика. На первом показывается функция
-на всем исходном интервале, точки вычислений и найденный минимум. На втором
-отображается увеличенная окрестность итогового отрезка локализации. Графики
-сохраняются в каталоге \\ \texttt{results/<method>/} с именем тестовой функции.
-
-Для исследования сходимости сохраняются число вычислений функции и длина
-текущего интервала локализации. Эти данные используются для построения графика
-в логарифмическом масштабе. Отдельно реализовано сравнение методов при одинаковом
-числе вычислений функции, что позволяет сравнивать не только итоговую точность,
-но и вычислительную эффективность алгоритмов.
-\newpage

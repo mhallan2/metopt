@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{find\PYGZus{}lipschitz\PYGZus{}constant}\PYG{p}{(}\PYG{n}{function}\PYG{p}{,} \PYG{n}{a}\PYG{p}{,} \PYG{n}{b}\PYG{p}{,} \PYG{n}{N}\PYG{o}{=}\PYG{l+m+mi}{1000}\PYG{p}{):}
+    \PYG{n}{x\PYGZus{}points} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{linspace}\PYG{p}{(}\PYG{n}{a}\PYG{p}{,} \PYG{n}{b}\PYG{p}{,} \PYG{n}{N}\PYG{p}{)}
+    \PYG{n}{y\PYGZus{}values} \PYG{o}{=} \PYG{n}{function}\PYG{p}{(}\PYG{n}{x\PYGZus{}points}\PYG{p}{)}
+    \PYG{n}{slopes} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{diff}\PYG{p}{(}\PYG{n}{y\PYGZus{}values}\PYG{p}{)} \PYG{o}{/} \PYG{n}{np}\PYG{o}{.}\PYG{n}{diff}\PYG{p}{(}\PYG{n}{x\PYGZus{}points}\PYG{p}{))}
+    \PYG{k}{return} \PYG{n}{np}\PYG{o}{.}\PYG{n}{max}\PYG{p}{(}\PYG{n}{slopes}\PYG{p}{)}
+\end{Verbatim}

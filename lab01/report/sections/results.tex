@@ -115,14 +115,14 @@
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.95\textwidth]{results/convergence/comparison_f1.png}
+	\includegraphics[width=0.75\textwidth]{results/convergence/comparison_f1.png}
 	\caption{Скорость сходимости локальных методов на функции $f_1$.}
 	\label{fig:convergence-f1}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.95\textwidth]{results/convergence/comparison_f2.png}
+	\includegraphics[width=0.75\textwidth]{results/convergence/comparison_f2.png}
 	\caption{Скорость сходимости локальных методов на функции $f_2$.}
 	\label{fig:convergence-f2}
 \end{figure}
@@ -162,22 +162,14 @@
 \subsection{Сравнение при одинаковом числе вычислений}
 
 Для корректного сравнения глобальных методов им был задан одинаковый бюджет
-вычислений функции. На рисунках~\ref{fig:global-x-error} и
-~\ref{fig:global-f-error} показаны ошибки координаты минимума и значения
+вычислений функции. На рисунках~\ref{fig:global-errors} показаны ошибки координаты минимума и значения
 функции относительно эталонного решения, полученного на плотной сетке.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.88\textwidth]{results/comparison/global_x_convergence_f3.png}
+	\includegraphics[width=0.88\textwidth]{results/convergence/global_comparison_f3.png}
 	\caption{Ошибка координаты минимума при одинаковом числе вычислений.}
-	\label{fig:global-x-error}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.88\textwidth]{results/comparison/global_f_convergence_f3.png}
-	\caption{Ошибка значения функции при одинаковом числе вычислений.}
-	\label{fig:global-f-error}
+	\label{fig:global-errors}
 \end{figure}
 
 Эти графики показывают, что метод ломаных обеспечивает более точное
