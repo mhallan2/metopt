@@ -91,16 +91,12 @@ def visualize(
             evaluation_points,
             evaluation_values,
             label="Точки вычислений",
+            c="r",
             s=18,
             alpha=0.7,
         )
 
     axes[0].axvline(x_min, linestyle="--", label="Найденный минимум", c="green")
-    axes[0].scatter(
-        x_neighbors,
-        function(x_neighbors),
-        label="Границы интервала",
-    )
 
     axes[0].set_xlim(a, b)
     axes[0].set_xlabel("x")
@@ -124,14 +120,20 @@ def visualize(
             evaluation_values,
             label="Точки вычислений",
             s=18,
+            c="r",
             alpha=0.7,
         )
 
     axes[1].axvline(x_min, linestyle="--", label="Найденный минимум", c="green")
-    axes[1].scatter(
+    axes[1].scatter(x_min, function(x_min), label="f(x_min)", c="green", s=30)
+    axes[1].vlines(
         x_neighbors,
-        function(x_neighbors),
+        0,
+        1,
+        colors="orange",
+        linestyles="--",
         label="Границы интервала",
+        transform=axes[1].get_xaxis_transform(),
     )
 
     axes[1].set_xlim(
@@ -177,28 +179,56 @@ def passive(function, N=None, show=True):
 
     if N % 2 == 1:
         step = (b - a) / (N + 1)
+
         x_grid_passive = a + step * np.arange(1, N + 1)
 
     else:
         k = N // 2
+
         centers = a + (b - a) / (k + 1) * np.arange(1, k + 1)
+
         x_grid_passive = np.empty(N)
+
         x_grid_passive[0::2] = centers - delta
         x_grid_passive[1::2] = centers
+
         x_grid_passive.sort()
 
-    values = function(x_grid_passive)
+    values = np.empty(N)
+
+    n_history = []
+    length_history = []
+
+    best_idx = 0
+    left = a
+    right = b
+
+    for i, x in enumerate(x_grid_passive):
+        values[i] = function(x)
+
+        # Сетка отсортирована, поэтому обновляем лучший индекс за O(1).
+        if values[i] < values[best_idx]:
+            best_idx = i
+
+        # Скобка минимума по уже вычисленным точкам: ближайшие
+        # измеренные соседи лучшей точки (или край интервала).
+        left = a if best_idx == 0 else x_grid_passive[best_idx - 1]
+        right = b if best_idx == i else x_grid_passive[best_idx + 1]
+
+        n_history.append(i + 1)
+        length_history.append(right - left)
 
     min_idx = np.argmin(values)
     x_min = x_grid_passive[min_idx]
 
     left = a if min_idx == 0 else x_grid_passive[min_idx - 1]
+
     right = b if min_idx == len(x_grid_passive) - 1 else x_grid_passive[min_idx + 1]
 
     x_neighbors = np.array([left, right])
 
-    print(f"Минимум (пассивный) {x_min}")
-    print(f"Количество вычислений функции (пассивный) {N}")
+    print(f"Минимум (пассивный): {x_min}")
+    print(f"Количество вычислений функции: {N}")
 
     if show:
         visualize(
@@ -217,6 +247,8 @@ def passive(function, N=None, show=True):
         n_evaluations=N,
         neighbors=x_neighbors,
         evaluation_points=x_grid_passive,
+        n_history=n_history,
+        length_history=length_history,
     )
 
 
@@ -238,22 +270,27 @@ def dichotomy(function, N=None, show=True):
 
         x1 = middle - delta
         x2 = middle + delta
-
+        print(f"Текущий интервал: [{left}, {right}]")
         f1_value = function(x1)
         f2_value = function(x2)
 
         evaluation_points.extend([x1, x2])
+        print(f"Добавлены точки вычислений: {x1}, {x2}")
         n_evaluations += 2
 
         if f1_value < f2_value:
+            # print(f"Правая граница ({right}) сужается: {x2}")
             right = x2
         else:
+            # print(f"Левая граница ({left}) сужается: {x1}")
             left = x1
-
+        print(f"ПОСЛЕ ИЗМЕНЕНИЯ {right}, {left}")
+        print("--------------------------------")
         n_history.append(n_evaluations)
         length_history.append(right - left)
 
     x_min = 0.5 * (left + right)
+    print(f"Финальный интервал локализации: [{left}, {right}]")
 
     print(f"Минимум (метод дихотомии) {x_min}")
     print(f"Количество вычислений функции (метод дихотомии) {n_evaluations}")
@@ -731,19 +768,23 @@ def visualize_convergence(method, function):
     plt.show()
 
 
-def compare_convergence(function):
-    """Один график сходимости последовательных методов из ТЗ."""
-    methods = [
-        ("Дихотомия", dichotomy),
-        ("Фибоначчи", fibonacci),
-        ("Золотое сечение", golden_ratio),
-        ("Параболы", parabola),
-    ]
+def compare_convergence(function, N=None, methods=None):
+    """Строит на одном графике длину локализации от числа вычислений."""
+    if methods is None:
+        methods = [
+            ("Пассивный", passive),
+            ("Дихотомия", dichotomy),
+            ("Фибоначчи", fibonacci),
+            ("Золотое сечение", golden_ratio),
+            ("Параболы", parabola),
+        ]
 
     fig, ax = plt.subplots(figsize=(8, 5))
+    if N is None:
+        N = N_TEST_POINTS
 
     for name, method in methods:
-        result = method(function, show=False)
+        result = method(function, N=N, show=False)
 
         if result.length_history:
             ax.semilogy(
@@ -752,6 +793,8 @@ def compare_convergence(function):
                 "o-",
                 label=name,
             )
+        else:
+            print(f"У метода {name} отсутствует история длины интервала.")
 
     ax.set_xlabel("Количество вычислений функции")
     ax.set_ylabel("Длина интервала локализации")
@@ -926,7 +969,7 @@ def search(function, N=None, show=True):
     # Если N не задано, выбираем его из требуемой погрешности
     # по координате x_min.
     if N is None:
-        N = int(np.ceil((b - a) / (2.0 * eps)))
+        N = int(np.ceil((b - a) / (2.0 * eps_f)))
 
     step = (b - a) / N
 
@@ -1222,22 +1265,24 @@ poly_functions = [f3]
 uni_methods = [passive, dichotomy, fibonacci, golden_ratio, parabola]
 poly_methods = [broken_lines, search]
 
-for f in poly_functions:
-    compare_global_methods_equal_evaluations(f, N=500)
+# for f in poly_functions:
+#     compare_global_methods_equal_evaluations(f, N=500)
 
 # for f in uni_functions:
 #     compare_local_methods_equal_evaluations(f, N=20)
 
-# for f in uni_functions:
+# for f in poly_functions:
 #     for m in uni_methods:
+#         m(f)
+
+# for f in uni_functions + poly_functions:
+#     for m in poly_methods:
 #         m(f)
 
 # for f in poly_functions:
 #     for m in poly_methods:
 #         m(f)
-
-# for f in uni_functions:
-#     compare_convergence(f)
+search(f3)
 
 # broken_lines(f3)
 # passive(f1)
